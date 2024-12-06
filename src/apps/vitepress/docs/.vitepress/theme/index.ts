@@ -36,8 +36,8 @@ export default {
       themeConfig:{
         ...siteData.value.themeConfig,
         nav:[
-          { text: "Vue", link: "/vue/intro" },
-          { text: "Vue", link: "/vuex/intro" },
+          { text: "Vue", link: "/vitepress/vue/intro" },
+          { text: "Vuex", link: "/vitepress/vuex/intro" },
         ]
       }
     }
