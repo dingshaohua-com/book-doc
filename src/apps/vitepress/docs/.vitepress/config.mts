@@ -1,12 +1,5 @@
 import { defineConfig } from 'vitepress'
-// import { withSidebar } from 'vitepress-sidebar';
-import * as aa from 'vitepress-sidebar';
-console.log(aa);
-
-
-
-  // console.log(1111, withSidebar);
-  
+import { withSidebar } from 'vitepress-sidebar';
 
 const vitePressOptions = defineConfig({
   title: "丁知识库",
@@ -33,7 +26,6 @@ const vitePressOptions = defineConfig({
   }
 })
 
-export default vitePressOptions;
 
 // const vitePressSidebarOptions = {
 //   documentRootPath: '/docs',
@@ -57,4 +49,4 @@ const vitePressSidebarOptions = [
   }
 ]
 
-// export default defineConfig(withSidebar(vitePressOptions, vitePressSidebarOptions));
+export default defineConfig(withSidebar(vitePressOptions, vitePressSidebarOptions));
