@@ -7,8 +7,8 @@ const vitePressOptions = defineConfig({
   base: "/vitepress",
   themeConfig: {
     nav: [
-      { text: 'Vue', link: '/vue/intro' },
-      { text: 'Vuex', link: '/vuex/intro' }
+      { text: 'Vue', link: '/vitepress/vue/intro' },
+      { text: 'Vuex', link: '/vitepress/vuex/intro' }
     ],
 
     sidebar: [
