@@ -1,0 +1,397 @@
+---
+hide_title: true
+sidebar_position: 8
+sidebar_label: 高级类型
+---
+
+
+
+## 交叉类型
+交叉类型的功能类似于[接口继承](https://blog.csdn.net/xihuanLilia/article/details/124921974)，用`&`来组合多个类型为一个类型
+```ts
+interface Person { name: string }; // 人
+interface Wolf { cry: string }; // 狼
+type Werewolf = Person & Wolf; // 狼人
+const werewolf: Werewolf = {
+    name:'杰克',
+    cry:'嗷~呜嗷~呜' // 叫声
+}
+```
+
+## 联合类型
+联合类型表示一个值可以是几种类型之一。 用竖线`|`分隔每个类型
+```ts
+let i:string|number = 1;
+i = 'hello';
+i = true; // 错误：不能将类型“boolean”分配给类型“string | number”
+```
+
+
+## 类型保护与区分类型
+:::tip
+类型保护也称类型守卫、类型防护等，是ts用于缩小类型范围。有效地保障类型的安全性。    
+我们常常使用类型保护来区分联合类型的不同成员，常用的类型保护包括switch、字面量恒等（==、===、!=、!==）、typeof、instanceof、in 和自定义类型保护这几种。
+:::
+
+联合类型存在一个弊端，只能访问此联合类型的所有类型里共有的成员
+```ts
+interface Bird {
+    fly();
+    eat();
+}
+
+interface Fish {
+    swim();
+    eat();
+}
+
+function getPet(): Fish | Bird {
+    // ...
+}
+
+let pet = getPet();
+pet.eat(); 
+pet.swim(); // 错误：类型“Bird”上不存在属性“swim”。
+```
+
+Js里常用来区分2个可能值的方法是检查成员是否存在。     
+但是如之前提及的，我们只能访问联合类型中共同拥有的成员。如下则会报错
+
+```ts
+let pet = getPet();
+if(pet.swim){ // 错误：类型“Bird”上不存在属性“swim”。
+    pet.swim(); // 错误：类型“Bird”上不存在属性“swim”。
+}
+```
+为了让这段代码工作，我们要使用类型断言：
+```ts
+let pet = getPet();
+if((<Fish>pet).swim){
+    (<Fish>pet).swim();
+}
+```
+
+
+### 自定义的类型保护
+如上代码，我们可以注意到我们不得不多次使用类型断言。     
+假若我们一旦检查过类型，就能在之后的每个分支里清楚地知道 pet的类型的话就好了。
+这时我们就是可以使用ts的类型保护了：类型保护就是一些表达式，它们会在运行时检查以确保在某个作用域里的类型。
+```ts
+let pet = getPet();
+
+// 类型保护
+function isFish(pet: Fish | Bird): pet is Fish {
+    return (<Fish>pet).swim !== undefined;
+}
+
+// 使用类型保护来判断
+if(isFish(pet)){
+    pet.swim(); 
+}else{
+    pet.fly();
+}
+```
+
+要定义一个类型保护，我们只要简单地定义一个函数，它的返回值是一个 类型谓词，如上`pet is Fish`就是类型谓词。每当使用一些变量调用 isFish时，ts会将变量缩减为那个具体的类型。
+
+注意ts不仅知道在 if分支里 pet是 Fish类型； 它还清楚在 else分支里，一定 不是 Fish类型，一定是 Bird类型。
+
+
+### typeof类型保护
+如果是基本数据类型的，我们采用上边的方式来类型判断。
+则必须要定义一个函数来判断类型是否是原始类型，这太痛苦了。
+```ts
+function isNumber(x: any): x is number {
+    return typeof x === "number";
+}
+function isString(x: any): x is string {
+    return typeof x === "string";
+}
+
+function test(value: string | number) {
+    if (isNumber(value)) {
+        console.log(value.toFixed());
+    } else if (isString(value)) {
+        console.log(value.charAt(1));
+    }
+}  
+```
+
+幸运的是，针对基本数据类型 我们大可不必这么做。   
+因为ts可以将`typeof v === "基本数据类型"`识别为一个类型保护。  
+你可以直接在代码中使用type of来检查类型了。
+```ts
+function test(value: string | number) {
+    if (typeof value === "number") {
+        console.log(value.toFixed());
+    } else if (typeof value === "string") {
+        console.log(value.charAt(1));
+    }
+}  
+```
+
+### instanceof类型保护
+如果你已经阅读了 typeof类型保护并且对JavaScript里的 instanceof操作符熟悉的话，你可能已经猜到了这节要讲的内容。
+```ts
+class Bird { fly(){}; eat(){};}
+class Fish { swim(){}; eat(){};}
+
+function getPet(): Fish | Bird {
+    return Math.random() < 0.5 ? new Bird() : new Fish();
+}
+
+let pet = getPet();
+if(pet instanceof Fish){
+    pet.swim();
+}
+```
+instanceof的右侧必须只能作用在构造函数上（类和函数），不能是单纯的ts的类型（type、interface等）。
+
+## 可以为null的类型
+我们在[数据类型](ts-type.mdx)一节里已经做过简要说明。 默认情况下，类型检查器认为 null与 undefined可以赋值给任何类型。
+这其实不太合理，如果我们介意这个，可以使用 `--strictNullChecks`标记可以解决此错误
+```ts
+let s1 = "foo";
+s = null; // 错误： 'null'不能赋值给'string'
+
+let s2: string | null = "bar";
+s2 = null; // 可以
+s2 = undefined; // 错误： 'undefined'不能赋值给'string | null'
+
+// 按照js的语义，ts会把 null和 undefined区别对待。
+// string | null， string | undefined和 string | undefined | null是不同的类型。
+```
+
+
+### 可选参数/属性
+使用了 --strictNullChecks，可选参数会被自动地加上 | undefined
+```ts
+/**
+ * 可选参数
+ */
+function f(x: number, y?: number) {
+    return x + (y || 0);
+}
+f(1, 2);
+f(1);
+f(1, undefined);
+f(1, null); // 错误：类型“null”的参数不能赋给类型“number | undefined”的参数
+
+/**
+ * 可选属性
+ */
+class C {
+    a: number;
+    b?: number;
+}
+let c = new C();
+c.b = 13;
+c.b = undefined;
+c.b = null; // 错误：不能将类型“null”分配给类型“number | undefined”
+```
+
+## 类型别名
+类型别名会给一个类型起个新名字。
+```ts
+type Str = string;
+const s1:Str = 'hello';
+
+type StrOrNum = string|number;
+let s2:StrOrNum = 'hello';
+s2 = 123;
+```
+
+类型别名也可以是泛型，这个写法就和接口非常像
+```ts
+type Container<T> = { value: T };
+
+
+// 我们也可以使用类型别名来在属性里引用自己
+type Tree<T> = {
+    value: T;
+    left: Tree<T>;
+    right: Tree<T>;
+}
+```
+
+![](https://img.dingshaohua.com/book-fe/202411231547210.png)
+
+尽管和接口看起来很像，而且大部分情况下两者可以相互代替，但还有点区别（type vs interface）：    
+类型别名即不能 也不能被 extends和 implements，但是接口可以   
+类型别名不能参与 声明合并，但接口可以。    
+类型别名可以声明基本类型，联合类型，元组等类型，但接口不行。
+
+## 字面量类型
+
+### 字符串 字面量类型
+字符串字面量类型允许你指定字符串必须的固定值。    
+在实际应用中，字符串字面量类型可以与联合类型,类型别名很好的配合。     
+通过结合使用这些特性，你可以实现类似枚举类型的字符串。
+```ts
+type Looks = "beautiful" | "ugly";
+const xiaohongLooks:Looks = "beautiful";
+```
+
+### 数字 字面量类型
+和字符串 字面量类型写法一样，用法一样
+```ts
+type Score = 50 | 70 | 90;
+const xiaohongScore:Score = 70;
+```
+
+TypeScript 同样也提供 [boolean 字面量类型](https://www.mianshigee.com/tutorial/TypeScriptDeepDiveZH/20.md)，这里不再多做介绍
+
+## 可辨识联合类型
+定义：一个联合类型， 其中包含共同的字面量的字段属性。     
+作用：这种类型的本质是结合联合类型和字面量类型的一种类型保护方法。如果一个类型是多个类型的联合类型，且多个类型含有一个公共属性，那么就可以利用这个公共属性，来创建不同的类型保护区块。
+```ts
+interface Square {
+    kind: "square";
+    size: number;
+}
+interface Rectangle {
+    kind: "rectangle";
+    width: number;
+    height: number;
+}
+interface Circle {
+    kind: "circle";
+    radius: number;
+}
+type Shape = Square | Rectangle | Circle;
+```
+
+
+使用`类型保护`根据具有判断性的属性（如 在这里是 kind），来判断联合类型的具体类型 
+ts 将会认为你会使用的对象类型一定是拥有特殊字面量的，并且它会为你自动把类型范围变小：
+```ts
+function area(s: Shape) {
+    switch (s.kind) { // 这里s只能访问 kind属性
+        case "square": return s.size * s.size; // 现在 TypeScript 知道 s 的类型是 Square，所以你现在能安全使用它
+        case "rectangle": return s.height * s.width;
+        case "circle": return Math.PI * s.radius ** 2;
+    }
+}
+```
+
+```ts
+function area(s: Shape) {
+  if (s.kind === 'square') { // 这里s只能访问 kind属性
+    // 现在 TypeScript 知道 s 的类型是 Square， 所以你现在能安全使用它
+    return s.size * s.size;
+  } else {
+    // 不是一个 square ？因此 TypeScript 将会推算出 s 一定是 Rectangle
+    return s.width * s.height;
+  }
+}
+```
+
+## 索引类型
+现学习几个新的类型操作符
+### 索引类型查询操作符
+`keyof T`。 对于任何类型 T， 它的结果都为 T上已知的公共属性名的联合。 例如：
+```ts
+let personProps: keyof Person; // 'name' | 'age'
+```
+keyof Person是完全可以与 'name' | 'age'互相替换的。
+```ts
+type Person = {
+    name: string;
+    age: number;
+};
+
+type P1 = keyof Person; // 等价与 'name' | 'age'
+``` 
+不同的是如果你添加了其它的属性到 Person，例如 address: string，那么 keyof Person会自动变为 'name' | 'age' | 'address'。
+
+###  索引访问操作符
+`T[K]`，通过 `[]` 索引类型访问操作符, 我们就能得到某个索引的类型
+```ts
+interface Person {
+    name: string;
+    age: number;
+}
+const preson:Person  = {
+    name: '小红',
+    age: 18
+}
+// 错误：Person['name']类型为string，但是值却是number类型，不匹配
+const persionName:Person['name'] = preson['age'];  
+```
+
+来一个使用索引类型查询和 索引访问操作符的综合例子  
+```ts
+// 定义方法：根据传入的属性 获取其值
+function getProperty<T, K extends keyof T>(o: T, name: K): T[K] {
+    return o[name]; // o[name] 的类型是 type T[K]
+}
+let name: string = getProperty(person, 'name');
+let unknown = getProperty(person, 'unknown'); // 错误,：'unknown' 不属于 'name' | 'age'
+```
+
+
+### 与可索引的类型结合
+之前学过的[可索引的类型](interface.mdx#可索引的类型)， 这里将其与索引类型（即keyof和 T[K]）进行交互。   
+
+如果你有一个带有字符串索引签名的类型，那么 keyof T会是 string。 并且 T[string]为索引签名的类型：
+```ts
+interface MyMap<T> {
+    [key: string]: T;
+}
+let keys: keyof MyMap<number>; // string
+let value: MyMap<number>['foo']; // number
+```
+
+个人感觉 索引类型 这一章应该隶属于 可索引的类型那一章节 而不是分开独立一章节放在高级类型中。
+
+## 映射类型
+ts提供了一种从旧类型中创建新类型的方法，叫做映射类型。   
+
+来个最简单的例子 
+```ts
+type Keys = 'option1' | 'option2';
+type Flags = { [K in Keys]: boolean };
+
+// 等价于如下
+// type Flags = {
+//     option1: boolean;
+//     option2: boolean;
+// }
+```
+它内部使用了 for .. in。 具有三个部分：
+* 类型变量 K，它会依次绑定到每个属性。
+* 字符串字面量联合的 Keys，它包含了要迭代的属性名的集合。
+* 属性的结果类型。
+
+
+不过 在真正的应用里，可能不同于上面的例子那用简单。    
+会更加复杂的需求，比如：会基于一些已存在的类型，做出修改。   
+keyof和索引访问类型刚好能解决这个问题。
+```ts
+interface Person {
+    name: string;
+    age: number;
+}
+type PartialPerson = { [P in keyof Person]?: Person[P] }
+// 等价于如下
+// interface PersonPartial {
+//     name?: string;
+//     age?: number;
+// }
+```
+
+可以看到有些地方是可以有一些通用版本，我们可以提取一下
+```ts
+type Readonly<T> = {
+    readonly [P in keyof T]: T[P];
+}
+type Partial<T> = {
+    [P in keyof T]?: T[P];
+}
+
+type PersonPartial = Partial<Person>;
+type ReadonlyPerson = Readonly<Person>;
+// 在这些例子里，属性列表是 keyof T，结果类型是 T[P]。
+```
+
+

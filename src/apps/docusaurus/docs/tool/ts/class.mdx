@@ -1,0 +1,338 @@
+---
+hide_title: true
+sidebar_position: 5
+sidebar_label: 类
+---
+
+
+## 基本概念
+以前js只是基于原型的面向对象，对于基于类的面向对象（java、c#）的开发者 理解起来则比困难。  
+为此ts则让其支持类的概念。   
+不过es2015之后 js也支持了类。
+
+### 对象和类的概念   
+对象：对象是类的一个实例（对象不是找个女朋友），有状态和行为。   
+例如，一条狗是一个对象，它的状态有：颜色、名字、品种；行为有：摇尾巴、叫、吃等。
+
+类：类是一个模板，它描述一类对象的行为和状态。
+
+![](https://img.dingshaohua.com/book-fe/202411231547208.jpg)
+
+
+### 类的内容
+成员属性/方法（也叫做实例成员）：在创建对象的时候初始化。可以被类中其它方法、或构造方法等访问。    
+类属性/方法/代码块（也叫做类成员）：在类初始化的时候就会被执行，由static修饰。    
+局部变量/方法：在类/成员方法或语句块中定义的被称为局部变量/方法。其声明和初始化都是在类方法或者成员方法中，方法结束后，变量就会自动销毁。
+
+
+下边例子是一个最基本的例子
+```ts
+class Dog {
+    // 成员属性
+    name: string; // 名字
+    breed: string; // 品种
+    color: string; // 颜色
+    age: number; // 大小 
+
+    // 构造函数 
+    constructor(breed: string, name: string, color: string, age: number) {
+        this.name = name;
+        this.breed = breed;
+        this.color = color;
+        this.age = age;
+    }
+
+    // 成员方法
+    eat(): void {
+        console.log('库茨库茨一顿造');
+    }
+
+    run(): void {
+        console.log('吧嗒吧嗒跑');
+    }
+
+    sleep(): void {
+        console.log('呼呼睡觉');
+    }
+
+    speak(): void {
+        const now = new Date(); // 局部变量
+        console.log(`我叫${this.name}，现在是${now}，该睡觉啦 -- ${this.sleep()}`);
+
+    }
+}
+
+const huahua: Dog = new Dog('花花', '小猎犬', '黄色', 2); // 用关键字 new 来创建一个对象，会调用构造方法初始化对象
+console.log(huahua); // {name:'花花',breed: '小猎犬',color:'黄色', age:2 }
+huahua.speak(); // 对象 调用 实例（即类的成员）方法
+```
+
+
+## 继承
+基于类的程序设计中一种最基本的模式是允许使用继承来扩展现有的类。
+
+下边这个例子展示了最基本的继承：类从基类中继承了属性和方法。    
+这里， Dog是一个 派生类，它派生自 Animal 基类，通过 extends关键字。 派生类通常被称作 子类，基类通常被称作 超类。    
+因为 Dog继承了 Animal的功能，因此我们可以创建一个 Dog的实例，它能够 bark()和 move()。
+```ts
+class Animal {
+    move(distanceInMeters: number = 0) {
+        console.log(`动物移动了${distanceInMeters}米.`);
+    }
+}
+
+class Dog extends Animal {
+    bark() {
+        console.log('旺旺! 旺旺!');
+    }
+}
+
+const dog = new Dog();
+dog.bark();
+dog.move(10);
+```
+
+### 构造函数
+这里大家会好奇，上边这个例子中的类为什么没有构造函数，   
+这里说明下：如果（在没有必要的情况下）没显式声明构造，类自己会有一个隐式的无参构造    
+这两种写法没有任何区别   
+```ts
+class Animal1 {
+    animalName = '动物';
+}
+
+class Animal2 {
+    animalName = '动物';
+    constructor() {
+
+    }
+}
+```
+不过当 需要使用类构造函数来初始化实例属性的时候，则有参构造就是必须的了
+
+### super
+
+另外大家还需要认识下super这个关键字   
+默认情况下，如果类中没有定义显式构造函数且存在继承关系，其子类会自动调用父类的构造进行初始化，    
+若自己显示定义了constructor，则必须利用super()调用父类的构造函数
+```ts
+class Animal {
+    animalName = '动物';
+    constructor(){
+        console.log('父类构造被调用');
+    }
+}
+
+class Dog extends Animal {
+    dogName = '小花';
+    constructor() {
+        console.log('子类构造被调用'); 
+        super(); // 相当于 super.constructor()
+        console.log(this); // 不要在调用 super()之前引用 this，还没有初始化完成
+    }
+}
+
+new Dog();
+
+/**
+ * 输出如下：
+ * 子类构造被调用
+ * 父类构造被调用
+ * Dog { animalName: '动物', dogName: '小花' }
+ */
+```
+
+
+
+也可以通过super关键字来实现对父类成员的访问。    
+特别是当子类和父类拥有同名方法或属性的时候，其存在尤为必要。    
+super相当于拿到了父类中的this。
+```ts
+class Animal {
+    name = '动物';
+    sayName() {
+        console.log('动物类的sayName：'+this.name);
+    }
+}
+
+class Dog extends Animal {
+    name = '小狗';
+    sayName() { // 重写父类方法（若父类方法访问修饰为private则不可重写）
+        console.log('小狗类的sayName：'+this.name);
+    }
+    test(){
+        super.sayName()
+    }
+}
+
+new Dog().test();  // 动物类的sayName：小狗
+
+```
+
+
+
+## 修饰符
+### 只读 修饰符
+使用 readonly关键字将属性设置为只读的。 只读属性必须在声明时或构造函数里被初始化。
+```ts
+class People {
+    readonly name: string;
+    readonly age: number = 8;
+    constructor (name: string) {
+        this.name = name;
+    }
+}
+const p = new People("小红");
+p.name = "小青"; // 错误! name 是只读的，只能通过构造传入来设置.
+```
+
+### 静态 修饰符
+到目前为止，我们只讨论了类的实例成员，那些仅当类被实例化的时候才会被初始化的属性。     
+我们也可以创建类的静态成员，这些属性存在于类本身上面而不是类的实例上。    
+当类被加载的时候，这些代码就会被初始化执行。
+```ts
+class Utils {
+    // 静态属性
+    static version = '1.0.0';
+
+    // 静态方法
+    static getSum(num1: number, num2: number): number {
+        return num1 + num2
+    }
+
+    static isEmpty(obj: object): boolean {
+        return Object.keys(obj).length === 0;
+    }
+
+    // 静态代码块
+    static {
+        console.log('类被初始化了，我的版本是：' + Utils.version);
+    }
+}
+
+Utils.getSum(1,2); // 3
+```
+:::tip 注意
+在ts中 super是可以用在静态方法中的。比如下边
+```ts
+class Animal {
+    static say(){
+        console.log('我是父类的say方法');
+        
+    }
+}
+
+class Dog extends Animal {
+    static say(){
+        super.say()
+    }
+}
+```
+但是Java是不支持的 因为底层问题，会报错：Cannot use super in a static context
+:::
+
+### 访问控制 修饰符
+（目前ts的访问控制 修饰符尚不能用在类和接口本身上。）    
+访问修饰符的使用主要用来隐藏类的实现细节和保护类的数据。   
+ts中，可以使用访问控制符来保护对类、变量、方法和构造方法的访问，支持 4 种不同的访问权限。   
+    
+
+* public：可见性最大，对所有可见，默认不写就是此修饰符。
+* private : 仅在本类内可见。
+* protected : 对本类和所有子类可见。
+
+```ts
+class Animal {
+    private name: string;
+    constructor(theName: string) { this.name = theName; }
+    public move(distanceInMeters: number) {
+        console.log(`${this.name} 移动了 ${distanceInMeters}米.`);
+    }
+}
+
+const animal = new Animal('小动物');
+animal.move(10); // 输出： 小动物移动了10米.
+console.log(animal.name); // 报错误： 属性“name”为私有属性，只能在类“Animal”中访问
+```
+
+```ts
+class Animal {
+    protected name: string = '小动物';
+    private age: number = 10;
+}
+
+class Dog extends Animal{
+    static say(){
+        console.log(this.name); // 输出：小动物
+        console.log(this.age); // 属性“age”为私有属性，只能在类“Animal”中访问
+    }
+}
+
+Dog.say();
+```
+
+
+## 抽象类
+在基于类的面向对象的概念中，所有的对象都是通过类来描绘的。    
+但是反过来，并不是所有的类都是用来描绘对象的，如果一个类中没有包含足够的信息来描绘一个具体的对象，这样的类就是抽象类。
+
+抽象类做为其它派生类的基类使用。 它们一般不会也不能直接被实例化。 不同于接口，抽象类可以包含成员的实现细节。   
+抽象类除了不能实例化对象之外，类的其它功能依然存在，成员变量、成员方法和构造方法的访问方式和普通类一样。       
+由于抽象类不能实例化对象，所以抽象类必须被继承，才能被使用。也是因为这个原因，通常在设计阶段决定要不要设计抽象类。      
+父类包含了子类集合的常见的方法，但是由于父类本身是抽象的，所以不能使用这些方法。 
+
+```ts
+abstract class Animal {
+    abstract makeSound(): void;
+    move(): void {
+        console.log('走两步');
+    }
+}
+
+class Dog extends Animal{
+    // 子类必须实现父抽象类的所有抽象成员（属性、方法），否则会报错
+    makeSound(): void {
+        console.log('汪汪');
+    }
+}
+
+class Cat extends Animal{
+    // 子类必须实现父抽象类的所有抽象成员（属性、方法），否则会报错
+    makeSound(): void {
+        console.log('喵喵');
+    }
+}
+
+const cat = new Cat();
+cat.move();
+cat.makeSound();
+```
+
+
+## 作为类型
+在基本概念里，我们已经举了一个这样的例子。   
+类除了编写业务逻辑外（比如在js中类的作用），在ts中它还可以用作一个类型描述，也就是说可以将其作为一个类型来约束变量以及获得ide的智能提示。
+```ts
+class Animal {
+    name: string = '小动物';
+    move(): void {
+        console.log('走两步');
+    }
+}
+
+// 当然ts是可以自动推导出来了的，自己写了印象更深
+const animal: Animal = new Animal();
+// 或者
+const obj = new Object() as Animal;
+```
+
+另外，一般ide都会帮我们内置了很多标准库，如vscode内置的es标准库`lib.es5.d.ts`。   
+具体位置如我的在`C:\Users\Administrator\AppData\Local\Programs\Microsoft VS Code\resources\app\extensions\node_modules\typescript\lib\lib.es5.d.ts`     
+（一般定义类型 大家很少用类，都会用接口或者type等）
+```ts
+// 如内置Array类型定义。 不过，这些都是用接口定义的 而非类，接口下章学习
+const arr:Array<any> = new Array();
+// 如内置的Map类型定义
+const map:Map<any,any> = new Map();
+
+```

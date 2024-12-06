@@ -1,0 +1,133 @@
+---
+hide_title: true
+sidebar_position: 5
+sidebar_label: 对比其它
+---
+
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+
+## rollup
+
+模块打包器，更多请看[官网教程](https://www.rollupjs.com)。  
+和 webpack 功能基本一样，是其竞品。不过和 webpack 的区别在于：  
+1、它小巧，仅是款 ESM 打包器，无其它功能。  
+2、它利用 ESM 支撑，非 webpack 特殊处理。  
+3、它不支持模块的 HMR 热更新。
+
+拿上面 webpack 那个例子，改为 rollup 编译
+
+```shell
+# rollup 入口文件    -d 输出目录
+  rollup .\index.js  -d dist
+```
+
+命令执行完成后，会在项目根目录下生成`build`目录，这里边就是其处理好的 js 文件。最后 `index.html` 里引入即可。
+
+<Tabs>
+<TabItem value="index.html" label="index.html">
+
+```html title="index.html"
+<button>1+2=?</button>
+<script src="./build/index.js"></script>
+```
+
+</TabItem>
+<TabItem value="index.js" label="index.js">
+
+```js title="build/index.js"
+const btn = document.querySelector("button");
+
+btn.onclick = async () => {
+  const { add } = await import("./utils-123.js");
+  const res = add(1, 2);
+  console.log(res);
+};
+```
+
+</TabItem>
+<TabItem value="utils-5c8046dd.js" label="utils-123.js">
+
+```js title="build/utils-123.js"
+const add = (x, y) => {
+  return x + y;
+};
+
+export { add };
+```
+
+</TabItem>
+</Tabs>
+
+可以看到，打包后的代码和源码没什么区别。  
+代码的执行仍依赖于浏览器本身对模块化的支持，所以我觉得它处理了个寂寞 😂。
+
+📣 得出结论，webpack 和 babel 应用场景不同：
+应用开发用 前者，类库的开发则用 后者
+
+## esbuild
+[esbuild](https://esbuild.github.io/)模块打包器，同事也具备babel的功能。
+
+拿上面 webpack 那个例子，改为 esbuild 编译
+--bundle 表示需要编译，默认原样输出     
+--splitting 代表分割代码，默认不分割   
+--format=esm 代表输出模块类型，splitting仅支持esm   
+
+```shell
+  esbuild ./src/index.js --bundle --outdir=build --splitting --format=esm
+```
+
+命令执行完成后，会在项目根目录下生成`build`目录，这里边就是其处理好的 js 文件。最后 `index.html` 里引入即可。
+
+<Tabs>
+<TabItem value="index.html" label="index.html">
+
+```html title="index.html"
+<button>1+2=?</button>
+<script src="./build/index.js"></script>
+```
+
+</TabItem>
+<TabItem value="index.js" label="index.js">
+
+```js title="build/index.js"
+// src/index.js
+var btn = document.querySelector("button");
+btn.onclick = async () => {
+  const { add } = await import("./utils-YOWK4GEG.js");
+  const res = add(1, 2);
+  console.log(res);
+};
+```
+
+</TabItem>
+<TabItem value="utils-5c8046dd.js" label="utils-123.js">
+
+```js title="build/utils-123.js"
+// src/utils.js
+var add = (x, y) => {
+  return x + y;
+};
+export {
+  add
+};
+
+```
+
+</TabItem>
+</Tabs>
+
+可以看出 跟rollup处理模块化的方式 异曲同工之妙！   
+不过可以明显看出 esbuild不但处理了模块打包，并且还处理了代码转换，这是和webpack与rollup的最大区别。      
+其实本人一直觉得这样挺好，谁规定要分es6语法转换、es6模块打包 那么多概念，统称为es6+代码处理器不就行了！
+
+
+
+
+<!-- 前端工程化工具总结和对比
+包管理工具
+经过验证、较稳定的构建工具
+较新的构建工具
+自动化构建工具 -->

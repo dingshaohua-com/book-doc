@@ -1,0 +1,177 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: 基础
+---
+import Fieldset from "/src/components/Fieldset";
+import MockPlayer from "/src/components/MockPlayer";
+import MockBook from "/src/components/MockBook";
+
+网页由 3 个部分构成，分别是 html、css、js，我们将其称为`三剑客`。  
+它们是前端开发者的基础、立命之本, 强烈建议把它们学熟之后，再学后边的知识！
+
+```mermaid
+graph TB;
+    前端-->Html;
+    前端-->Css;
+    Html-->布局;
+    Css-->布局;
+    前端-->JavaScript;
+    JavaScript-->沟通用户和浏览器交互的桥梁;
+```
+
+
+## 布局 ( html+css )
+
+编写网页就像你绘画一样;  
+其中 html 就是你用铅笔素描基本的轮廓;  
+而 css 就是你给素描上色修饰填充。  
+![](https://img.dingshaohua.com/book-fe/202411231609309.jpg)
+
+一个网页，可以看作是一个个小盒子构成；  
+我们利用 html+css 来画出一个个小盒子来组装成完整页面。  
+![](https://img.dingshaohua.com/book-fe/202411231609310.png)
+
+<Fieldset title="🌰 举个例子">
+
+来写个 html 如下： div 相当于画出的一个盒子，里边的内容是 “你好，世界”
+
+```html
+<div>你好，世界</div>
+```
+
+![](https://img.dingshaohua.com/book-fe/202411231609311.jpg)
+
+我们用 css 给盒子添些样式： 将盒内字颜色设为蓝色，盒子背景设成粉红色
+
+```html
+<div style="color:red; background-color: blue;">你好，世界</div>
+```
+
+![](https://img.dingshaohua.com/book-fe/202411231609312.jpg)
+
+</Fieldset>
+
+至此，我们已经画了一个好看的盒子了！  
+而复杂页面，都是由这些盒子一个个拼起来的。  
+所以目前为止，你已经掌握了如何写页面了，看就是这么简单！  
+![](https://img.dingshaohua.com/book-fe/202411231609313.webp)
+
+## 交互 ( js )
+
+截至目前，我们写的页面还只是纯静态的，尚不能和浏览器以及页面进行交互。  
+
+什么是与浏览器交互？ 如下边有一个按钮，点一下浏览器就会弹窗，这就是最简单的一个交互。
+
+通过 js 我们则可以跟页面实现动态交互！
+
+<button
+  style={{margin: '10px 0'}}
+  onClick={() => {
+    alert("你好");
+  }}
+>
+  测试
+</button>
+
+```html
+<button onclick="test">测试</button>
+<script>
+  function test() {
+    alert("你好");
+  }
+</script>
+```
+
+不错，网页编程的最后一门技能`js`你也会了。  
+
+你现在已经具备了开发一个完整项目的能力了，在几年前 你可以找到一份月薪几千的前端开发工作了！
+
+
+## 教程
+
+我上边讲的很粗糙，还有很多细节，需要你仔细耐心的去学习。为此 我为你在网上 精心挑选了一些优秀的教程！
+
+### 📺 视频教程
+
+<MockPlayer
+  videos={[
+    {
+      title: "5分钟学习html",
+      desc: "峰华",
+      src: "https://www.bilibili.com/video/BV14V411Z7Bo",
+    },
+    {
+      desc: `这里有<a href='https://www.aliyundrive.com/s/HN5u67kvfJv' target="_blank">盗版</a>`,
+      title: "李巍 web前端入门",
+      src: "https://www.bilibili.com/cheese/play/ep7584",
+    },
+    {
+      desc: "前锋网",
+      title: "web前端入门",
+      src: "https://www.bilibili.com/video/BV17z4y1D7Yj",
+    },
+  ]}
+/>
+
+### 📖 文字教程
+
+<MockBook
+  videos={[
+    {
+      title: "HTML 语言教程",
+      desc: "阮一峰",
+      src: "https://www.bookstack.cn/read/html-tutorial",
+    },
+    {
+      title: "HTML 入门教程",
+      desc: "C语言中文网",
+      src: "http://c.biancheng.net/html",
+    },
+    {
+      title: "HTML 教程",
+      desc: "菜鸟教程",
+      src: "https://www.runoob.com/html",
+    },
+    {
+      title: "HTML 教程",
+      desc: "w3School",
+      src: "https://www.w3school.com.cn/html/index.asp",
+    },
+    {
+      title: "Css 教程",
+      desc: "菜鸟教程",
+      src: "https://www.runoob.com/css",
+    },
+    {
+      title: "Css 教程",
+      desc: "w3School",
+      src: "https://www.w3school.com.cn/css/index.asp",
+    },
+    {
+      title: "Js 标准参考",
+      desc: "阮一峰",
+      src: "http://javascript.ruanyifeng.com",
+    },
+    {
+      title: "Js教程",
+      desc: "廖雪峰",
+      src: "https://www.liaoxuefeng.com/wiki/1022910821149312",
+    },
+    {
+      title: "Js教程",
+      desc: "菜鸟教程",
+      src: "https://www.runoob.com/js",
+    },
+    {
+      title: "Js学习指南",
+      desc: "C语言中文网",
+      src: "http://c.biancheng.net/js",
+    },
+    {
+      title: "红宝书",
+      desc: "丁少华",
+      src: "https://dshvv.github.io/red-treasure-book/dist",
+    },
+  ]}
+/>

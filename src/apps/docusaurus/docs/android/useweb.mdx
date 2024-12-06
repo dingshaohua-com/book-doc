@@ -1,0 +1,270 @@
+---
+hide_title: true
+sidebar_position: 4
+sidebar_label: 嵌套网页
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+安卓有很多xxxView组件，   
+和web开发接除的最多的是webView   
+我们混合开发的时候基本都会用到这个组件
+<img src="https://img.dingshaohua.com/book-fe/20201127110134.png" width="200" />
+
+## 基本使用
+### 修改布局文件
+
+布局文件使用WebView标签，代码修改如下
+```xml title='activity_main.xml'
+<WebView
+        android:id="@+id/webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+```
+
+### 修改入口函数
+找到入口函数文件
+<Tabs>
+  <TabItem value="kotlin" label="kotlin" default>
+
+```java  title='MainActivity.kt'
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_main)
+
+        // 创建webView
+        val webView: WebView =findViewById(R.id.webView);
+        webView.loadUrl("https://www.baidu.com/");//加载url
+        webView.webViewClient = WebViewClient() // 防止调用外部浏览器
+        webView.webChromeClient = WebChromeClient() // alert弹窗需要
+        webView.settings.javaScriptCanOpenWindowsAutomatically = true //设置js可以直接打开窗口，如window.open()，默认为false
+        webView.settings.javaScriptEnabled = true //是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
+        webView.settings.setSupportZoom(false) //是否可以缩放，默认true
+        webView.settings.builtInZoomControls = true //是否显示缩放按钮，默认false
+        webView.settings.useWideViewPort = true //设置此属性，可任意比例缩放。大视图模式
+        webView.settings.loadWithOverviewMode = true //和setUseWideViewPort(true)一起解决网页自适应问题
+        webView.settings.domStorageEnabled = true //DOM Storage
+        webView.settings.allowFileAccessFromFileURLs = true // 处理跨域问题（主要是vue、react打包后白屏问题）
+        webView.settings.javaScriptEnabled = true
+        // webView.settings.setAppCacheEnabled(true) //是否使用缓存==Android13废弃
+        
+    }
+```
+
+
+  </TabItem>
+
+  <TabItem value="java" label="java">
+
+```java title='MainActivity.java'
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+
+        // 创建webView
+        WebView webView = (WebView) findViewById(R.id.webView);
+        webView.loadUrl("https://www.baidu.com/");//加载url
+        webView.setWebViewClient(new WebViewClient());// 防止调用外部浏览器
+        webView.setWebChromeClient(new WebChromeClient());// alert弹窗需要
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);//设置js可以直接打开窗口，如window.open()，默认为false
+        webView.getSettings().setJavaScriptEnabled(true);//是否允许执行js，默认为false。设置true时，会提醒可能造成XSS漏洞
+        webView.getSettings().setSupportZoom(false);//是否可以缩放，默认true
+        webView.getSettings().setBuiltInZoomControls(true);//是否显示缩放按钮，默认false
+        webView.getSettings().setUseWideViewPort(true);//设置此属性，可任意比例缩放。大视图模式
+        webView.getSettings().setLoadWithOverviewMode(true);//和setUseWideViewPort(true)一起解决网页自适应问题
+        webView.getSettings().setDomStorageEnabled(true);//DOM Storage
+        webView.getSettings().setAllowFileAccessFromFileURLs(true); // 处理跨域问题（主要是vue、react打包后白屏问题）
+        // webView.getSettings().setAppCacheEnabled(true); //是否使用缓存==Android13废弃
+
+       
+    }
+```
+
+  </TabItem>
+</Tabs>
+
+
+
+
+### 添加网络访问权限
+```xml title='AndroidManifest.xml'
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.dshvv.myapplication">
+    <uses-permission android:name="android.permission.INTERNET" /><!-- 增加这一行: 允许app访问网络-->
+  <application
+        android:usesCleartextTraffic="true" <!-- 增加这一行: 允许明文请求,即http-->
+  ...
+```
+最后重新编译，运行，就可以啦
+
+### 访问本地页面
+Android studio中右键项目根目录>New>Folder>Assets Folder
+然后将网页写在这里就可以。
+
+最后
+```java
+webView.loadUrl("file:///android_asset/index.html");//加载url
+```
+
+记得 最好要处理webView对象一定要配置允许跨域，否则可能白屏。
+
+## web（js）访问andriod方法
+### 向前端window中注入全局变量
+<Tabs>
+  <TabItem value="kotlin" label="kotlin" default>
+
+```java title="MainActivity.kt"
+webView.addJavascriptInterface(WebAppInterface(this), "demoApp");
+```  
+</TabItem>
+
+  <TabItem value="java" label="java">
+
+```java title='MainActivity.java'
+webView.addJavascriptInterface(new WebAppInterface(this), "demoApp");
+```  
+
+  </TabItem>
+</Tabs>
+
+### 创建与web通讯的自定义类
+<Tabs>
+  <TabItem value="kotlin" label="kotlin" default>
+
+```java title='WebAppInterface.kt'
+/**
+ * 向浏览器window中注入的全局变量类（前端接收到的是个对象）
+ */
+class WebAppInterface(app: AppCompatActivity) {
+    private val app = app;
+    /**
+     *对象中的成员
+     */
+    @JavascriptInterface
+    public fun method(arg: Any?){
+        Toast.makeText(app.applicationContext, "默认的Toast", Toast.LENGTH_SHORT).show();
+    }
+}
+``` 
+</TabItem>
+
+  <TabItem value="java" label="java">
+
+```java title='WebAppInterface.java'
+/**
+ * 向浏览器window中注入的全局变量类（前端接收到的是个对象）
+ */
+class WebAppInterface {
+    private MainActivity app;
+    public WebAppInterface(MainActivity app) {
+        this.app = app;
+    }
+
+    /**
+     *对象中的成员
+     */
+    @JavascriptInterface
+    public void method(String param) {
+        Toast.makeText(app.getApplicationContext(), "默认的Toast", Toast.LENGTH_SHORT).show();
+    }
+}
+``` 
+
+  </TabItem>
+</Tabs>
+
+
+### 前端调用
+```html
+<script>
+        demoApp.method('你好，世界')
+</script>
+```
+
+## andriod访问web（js）方法
+### 安卓页面中定一个按钮，及其按钮事件
+```xml
+<Button
+        android:id="@+id/button"
+        android:onClick="btnClick"
+        android:layout_width="200dp"
+        android:text="我是安卓原生按钮"
+        android:layout_height="50dp"/>
+```
+
+<Tabs>
+  <TabItem value="kotlin" label="kotlin" default>
+
+```java
+fun btnClick(view: View?) {
+    webView.post(Runnable { // 调用js方法
+        webView.evaluateJavascript("test('你好，世界')", null)
+        // webView.loadUrl("test('你好，世界')"); // 旧版
+
+        // 如果要给js传递对象（数组），则需要使用序列化 这里推荐gson库 https://github.com/google/gson
+        val list: List<*> = ArrayList<Any?>()
+        webView.evaluateJavascript("test" + "(" + gson.toJson(list) + ")", null)
+    })
+}
+```
+
+</TabItem>
+
+  <TabItem value="java" label="java">
+
+```java
+void btnClick(View view){
+        webView.post(new Runnable() {
+            @Override
+            public void run() {
+                // 调用js方法
+                webView.evaluateJavascript("test('你好，世界')", null); 
+                // webView.loadUrl("test('你好，世界')"); // 旧版
+
+                // 如果要给js传递对象（数组），则需要使用序列化 这里推荐gson库 https://github.com/google/gson
+                List list = new ArrayList();
+                webView.evaluateJavascript("test" + "(" + gson.toJson(list) + ")", null);
+            }
+        });
+}
+``` 
+
+  </TabItem>
+</Tabs>
+
+
+
+
+
+
+ 
+### web前端定义此方法
+```html
+ <script>
+        const test = (params)=>{
+            alert(params)
+        }
+</script>
+```
+<img src="https://img.dingshaohua.com/book-fe/20201127110135.png" width="200" />
+
+## web前端和原生前端的交互
+总的来说比较方便，cordova等jsBirdge方式，也能够让两种开发者更好的沟通。
+<img src="https://img.dingshaohua.com/book-fe/20201127110136.png" width="800" />
+
+
+## chrome调试webview
+### 放开调试
+首先安卓代码的onCreate要增加如下代码，放开调试
+```js
+WebView.setWebContentsDebuggingEnabled(true);
+```
+
+### 前端访问
+浏览器输入 `chrome://inspect/#devices`
+<img src="https://img.dingshaohua.com/book-fe/20201127110137.png" width="500" />
+
+参考：https://blog.csdn.net/carson_ho/article/details/64904691/

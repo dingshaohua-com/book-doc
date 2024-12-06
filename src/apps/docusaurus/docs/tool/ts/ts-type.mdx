@@ -1,0 +1,257 @@
+---
+hide_title: true
+sidebar_position: 3
+sidebar_label: 数据类型
+---
+
+## 布尔值
+最基本的数据类型就是简单的true/false值，在js和ts里叫做boolean。
+```ts
+const isDone: boolean = false;
+```
+## 数字
+js只有一种数值型数据类型，不管是整数还是浮点数，js都把归为数字。 即js中的所有数字都是双精度浮点数。     
+和js一样，ts里的所有数字都是浮点数，这些浮点数的类型是 number。     
+```ts
+const decLiteral: number = 6;
+```
+
+## 字符串
+string表示文本数据类型。 和js一样，可以使用双引号（ "）或单引号（'）或模版字符串来表示字符串。
+```ts
+const str1: string = "bob";
+const str2: string = 'smith';
+const str3: string = `Gene`;
+```
+
+
+## 数组
+有两种方式可以定义数组。 第一种，可以在元素类型后面接上 []，表示由此类型元素组成的一个数组。第二种方式是使用数组泛型，`Array<元素类型>`
+```ts
+const list: number[] = [1, 2, 3];
+const list: Array<number> = [1, 2, 3];
+```
+
+## 元组
+Tuple 类型允许表示一个已知元素数量和类型的数组，各元素的类型不必相同。    
+简而言之，就是一个可以 容纳不同数据类型的数组。    
+比如，你可以定义一对值分别为 string和number类型的元组。
+```ts
+let x: [string, number];
+x = ['hello', 10]; // // 初始化成功
+x = [10, 'hello']; // 初始化报错
+```
+访问或操作元素
+```ts
+// 当访问一个已知索引的元素，会得到正确的类型反馈：
+let x: [string, number]= ['hello', 10];
+console.log(x[0].substr(1)); // OK
+console.log(x[1].substr(1)); // Error, '类型“number”上不存在属性“substr”
+
+// 当访问一个越界的元素，会报错：
+x[3] = 'world'; // Error, 长度为 "2" 的元组类型 "[string, number]" 在索引 "3" 处没有元素
+```
+
+## 枚举
+enum类型是对js标准数据类型的一个补充。   
+像C#等其它语言一样，使用枚举类型可以为一组数值赋予友好的名字。
+举个例子：我们为果汁店设计一个程序，它将限制果汁为小杯、中杯、大杯。这就意味着它不允许顾客点除了这三种尺寸外的果汁。
+
+```ts
+enum FreshJuiceSize { SMALL, MEDIUM , LARGE, PLUS = 10 } // 默认情况下，从0开始为元素编号。 你也可以手动的指定成员的数值
+const sizeValue: FreshJuiceSize = FreshJuiceSize.MEDIUM; // 根据枚举名字获取m枚举值
+const sizeLabel: string = FreshJuiceSize[2]; // LARGE   根据枚举值获取枚举名字
+const testLabel: string = FreshJuiceSize[10]; // PLUS   根据枚举值获取枚举名字
+console.log(sizeLabel,sizeValue, testLabel);
+```
+
+## Any
+任意类型，让编译器忽略类型检查直接通过编译。
+```ts
+let notSure: any = 4;
+notSure = "maybe a string instead";
+notSure = false;
+```
+
+## Object
+### object
+ts 2.2 引入了被称为 object 类型的新类型，它用于表示非原始类型。   
+```ts
+/**
+ * object定义是一个对象类型，不能自动获取对象上的属性和方法
+ */
+const obj1: object = {name:'张三'}
+obj1.name = 123; // 类型“object”上不存在属性“name”
+
+/**
+ * object类型只能定义对象类型，不能定义其他类型
+ */
+const obj2: object = 123; // object类型只能定义对象类型，不能定义其他类型
+```
+
+
+### Object
+ts里还有个大写的`Object`类型。   
+它用于定义 JS Object 的原型对象Object.prototype，我们基本用不到这个类型。
+![](https://img.dingshaohua.com/book-fe/202411231547209.png)
+    
+
+
+## Void
+某种程度上来说，void类型像是与any类型相反，它表示没有任何类型。    
+当一个函数没有返回值时，你通常会见到其返回值类型是 void
+```ts
+// 表示没有任何返回值
+function warnUser(): void {
+    console.log("This is my warning message");
+}
+```
+不过单纯声明一个void类型的变量却没有什么大用，因为你只能为它赋予undefined和null：
+```ts
+const unusable: void = undefined;
+```
+
+
+## Null 和 Undefined
+值undefined和null两者各自有自己的类型分别叫做undefined和null。    
+和 void相似，它们的本身的类型用处不是很大
+```ts
+let u: undefined = undefined;
+let n: null = null;
+```
+
+默认情况下null和undefined是所有类型的子类型。   
+当你指定了--strictNullChecks标记，null和undefined只能赋值给void和它们各自。
+```ts
+const a:number = undefined;
+const b:string = undefined;
+const c:object = undefined;
+const d:void = undefined;
+```
+## Never
+### 基本概念
+一个很特殊的类型，表示的是那些永不存在的值的类型。    
+一般只在以下两种情况下使用。   
+（其实也很好理解，下边两个情况 一个永远会执行下去 一个会立刻发生错误 不是不返回 而是根本没有时间也来不及有返回类容）
+```ts
+// 函数永远不会有返回值时
+function infiniteLoop(): never {
+    while (true) {
+    }
+}
+
+// 函数永远会抛出一个错误时
+function error(message: string): never {
+    throw new Error(message);
+}
+```
+
+never类型是任何类型的子类型，也可以赋值给任何类型；   
+然而，没有类型是never的子类型或可以赋值给never类型（除了never本身之外）。    
+即使 any也不可以赋值给never。
+```ts
+// never类型是任何类型的子类型，也可以赋值给任何类型；
+const a:number = 123 as never;
+const b:string = 'hello' as never;
+
+// 然而，没有类型是never的子类型或可以赋值给never类型
+const c:never = 123; // 错误： 不能将类型“number”分配给类型“never”
+const d:never = 123 as never; // 正确：除了never本身之外
+const f:never =  123 as any; // 即使 any也不可以赋值给never
+```
+
+
+### 用途
+在 TypeScript 中，可以利用 never 类型的特性来实现详细的检查，具体示例如下
+```ts
+type Foo = string | number;
+
+function controlFlowAnalysisWithNever(foo: Foo) {
+  if(typeof foo === "string") {
+    // 这里 foo 被收窄为 string 类型
+  } else if(typeof foo === "number") {
+    // 这里 foo 被收窄为 number 类型
+  } else {
+    // foo 在这里是 never
+    const check: never = foo;
+  }
+}
+```
+
+注意在 else 分支里面，我们把收窄为 never 的 foo 赋值给一个显示声明的 never 变量。   
+如果一切逻辑正确，那么这里应该能够编译通过。   
+但是假如后来有一天你的同事修改了 Foo 的类型
+```ts
+type Foo = string | number | boolean;
+```
+
+而他忘记同时修改 `controlFlowAnalysisWithNever` 方法中的控制流程，这时候 else 分支的 foo 类型会被收窄为 boolean 类型，导致无法赋值给 never 类型，这时就会产生一个编译错误。
+
+通过这个方式，我们可以确保 `controlFlowAnalysisWithNever` 方法总是穷尽了 Foo 的所有可能类型。 
+
+通过这个示例，我们可以得出一个结论： 使用 never 避免出现新增了联合类型没有对应的实现，目的就是写出类型绝对安全的代码。
+
+
+### 和void区别 
+[TypeScript 已经具有 never类型，为什么它需要一个 void类型](https://www.go2live.cn/nocate/typescript-never-%e7%b1%bb%e5%9e%8b.html)。    
+
+尽管两者看起来很相似，但是它们代表了两个不同的概念：
+
+没有显式返回值的函数会隐式返回 undefined。尽管我们通常说这样的函数 “什么也不返回”，但实际上它是会返回的。在这些情况下，我们通常忽略返回值。在 TypeScript 中这些函数的返回类型被推断为 void。    
+具有 never返回类型的函数 永不返回。它也不返回 undefined。该函数没有正常完成，这意味着它可能会抛出异常或根本无法退出执行。
+
+never类型为 底部类型，也称为零类型或空类型。它通常表示为⊥，表示计算未将结果返回给调用方。void类型，在另一方面，是一个 单元类型（类型，它允许只有一个值），没有定义的操作。
+
+
+
+## 类型断言
+有时候你会比TypeScript更了解某个值的详细信息，通过类型断言这种方式可以告诉编译器，“相信我，我知道自己在干什么”。
+
+类型断言好比其它语言里的类型转换，但是不进行特殊的数据检查和解构。 它没有运行时的影响，只是在编译阶段起作用。 TypeScript会假设你，程序员，已经进行了必须的检查。
+
+类型断言有两种形式。 其一是“尖括号”语法,另一个为as语法
+```ts
+let someValue: any = "this is a string";
+let strLength1: number = (<string>someValue).length;
+let strLength2: number = (someValue as string).length;
+```
+
+
+## 类型推论
+在有些没有明确指出类型的地方，ts的类型推论会帮助提供类型。    
+这种推断发生在初始化变量和成员，设置默认参数值和决定函数返回值时。
+```ts
+let x = 3; // 变量x的类型被推断为数字
+```
+
+
+### 最佳通用类型
+当类型比较复杂时，ts会推断出一个最合适的通用类型。例如，
+```ts
+/**
+ * 为了推断arr的类型，我们必须考虑所有元素的类型。 这里有两种选择： number和string。 
+ * 计算通用类型算法会考虑所有的候选类型，并给出一个兼容所有候选类型的类型。
+ * 即arr的每个元素的类型均为 number和string类型的交集部分
+ */
+let arr = [0, 1, 'hello'];
+
+/**
+ * 有些时候找不到候选类型共享相同的通用类型
+ * 我们需要明确的指出类型
+ */
+let zoo1 = [new Cat(), new Dog(), new Snake()]; // 无法推断最佳通用类型的话，最终类型推断的结果为联合数组类型，(Cat | Dog | Snake)[]。
+let zoo2: Animal[] = [new Cat(), new Dog(), new Snake()]; // 明确的指出类型，这是最好的，别偷懒 
+```
+
+### 上下文类型
+按照相反的方向进行来类型推论
+```ts
+/**
+ * 上下文归类会在很多情况下使用到
+ * 如 函数的参数和返回值，赋值表达式的右边，类型断言，对象成员和数组字面量等
+ */
+const getName = ()=>{
+    return 'hello'
+}
+getName().parseInt(); // 报错：类型“string”上不存在属性“parseInt” 因为直接根据上下文推导出是string类型的
+```

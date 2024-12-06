@@ -1,0 +1,57 @@
+---
+sidebar_position: 4
+hide_title: true
+sidebar_label: react-redux
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import CodeBlock from "@theme/CodeBlock";
+import Index from "!!raw-loader!/src/components/DocsRedux/ReactReduxApp/index.js";
+import App from "!!raw-loader!/src/components/DocsRedux/ReactReduxApp/App.js";
+import AppUseHooks from "!!raw-loader!/src/components/DocsRedux/ReactReduxApp/AppUseHooks.js";
+import Tips from "!!raw-loader!/src/components/DocsRedux/ReactReduxApp/compnents/Tips.js";
+import TipsUseHooks from "!!raw-loader!/src/components/DocsRedux/ReactReduxApp/compnents/TipsUseHooks.js";
+
+![](https://img.dingshaohua.com/book-fe/202411222312727.jpg)   
+👉[react-redux 官方文档](https://react-redux.js.org) 👈
+
+因为 redux 和 react 组件的组合使用耦合度太高，为了解耦redux官方额外设计了react-redux ，有了它我们便不再需要使用 store 的 subscribe 自己去订阅状态了。
+
+通过 react-redux 帮我们把redux和react相连接，react项目中使用redux将灵活而高效。
+
+## 注入到 React
+
+注入 the redux store 到 react
+
+<CodeBlock language="jsx" title="src/index.jsx">
+  {Index}
+</CodeBlock>
+
+## 使用状态
+
+这里分别示例两种写法，新版的 hooks 用法，和老式的 connect 用法。
+
+<Tabs>
+  <TabItem value="新版用法" label="新版用法" default>
+    <CodeBlock language="jsx" title="src/App.jsx">{AppUseHooks}</CodeBlock>
+  </TabItem>
+
+  <TabItem value="传统用法" label="传统用法">
+    <CodeBlock language="jsx" title="src/App.jsx">{App}</CodeBlock>
+  </TabItem>
+</Tabs>
+
+## 更新状态
+
+同样的，这里也分别示例两种写法，新版的 hooks 用法，和老式的 connect 用法。
+
+<Tabs>
+  <TabItem value="新版用法" label="新版用法" default>
+    <CodeBlock language="jsx" title="src/components/Tips.jsx">{TipsUseHooks}</CodeBlock>
+  </TabItem>
+
+  <TabItem value="传统用法" label="传统用法">
+    <CodeBlock language="jsx" title="src/components/Tips.jsx">{Tips}</CodeBlock>
+  </TabItem>
+</Tabs>

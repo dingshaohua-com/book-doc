@@ -1,0 +1,133 @@
+---
+hide_title: true
+sidebar_position: 6
+sidebar_label: 页面跳转
+---
+
+
+跟web前端不同，Android前端没有跳转页面这一说，而是叫做 激活当前视窗。
+
+## 修改默认主页面代码
+activity_main.xml 布局如下
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+    <!--内容布局 -->
+    <TextView
+        android:id="@+id/txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="我是主页"/>
+    <Button
+        android:id="@+id/btn_click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="buttonClick"
+        android:text="前往详情页"
+        app:layout_constraintTop_toBottomOf="@+id/txt"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+
+对应MainActivity.java代码，添加一个按钮点击跳转的事件
+```java
+package com.dshvv.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
+public class MainActivity extends AppCompatActivity {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+    }
+
+    /*
+     * 按钮点击事件
+     */
+    public void buttonClick(View view) {
+        // 激活详情页视窗
+        Intent intent = new Intent(this, DemoDetail.class);
+        startActivity(intent);
+        // setContentView(R.layout.demo_detail); 这个跳转只执行页面xml，java还是老的
+    }
+}
+```
+
+## 增加一个新页面
+demo_detail.xml 代码如下
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".DemoDetail">
+    <!--内容布局 -->
+    <TextView
+        android:id="@+id/txt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:text="我是详情页"/>
+    <Button
+        android:id="@+id/btn_click"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:onClick="buttonClick"
+        android:text="返回主页"
+        app:layout_constraintTop_toBottomOf="@+id/txt"/>
+</androidx.constraintlayout.widget.ConstraintLayout>
+```
+DemoDetail.java代码如下
+```java
+package com.dshvv.myapplication;
+
+import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
+
+public class DemoDetail extends AppCompatActivity{
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.demo_detail);
+    }
+
+    /*
+    * 按钮点击事件
+    */
+    public void buttonClick(View view) {
+        // 激活主页视窗
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
+        // 出入动画
+        overridePendingTransition(android.R.anim.slide_in_left, android.R.anim.slide_out_right);
+        // overridePendingTransition(0, 0); // 或者去除默认动画
+    }
+}
+```
+
+## 将新页面注册到项目
+```xml
+     		...
+        <!-- 注册详情页-->
+        <activity android:name=".DemoDetail" />
+    </application>
+</manifest>
+```
+最终效果如下
+<img src="https://img.dingshaohua.com/book-fe/20221107162304.gif" width="300" />

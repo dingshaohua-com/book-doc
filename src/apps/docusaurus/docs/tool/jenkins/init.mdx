@@ -1,0 +1,74 @@
+---
+hide_title: true
+sidebar_position: 3
+sidebar_label: 初始化
+---
+
+## 必要软件
+**git**      
+因为后续的项目最基本的操作需要从仓库中拉去代码，而这个软件是需要安装，默认centos是不支持的。
+``` shell
+yum install -y git
+```
+
+**node**     
+node作为前端必备的神器，无论是react还是vue都是需要的。
+这里[教程](https://www.cnblogs.com/dingshaohua/p/7808954.html) 
+
+**java**      
+后端如果是java 这个就必须要安装，在第二章有介绍安装方法
+
+
+**mvn**    
+一键安装mvn命令，这个是java项目的三方包工具，如果用到也必须安装
+```shell
+curl -O https://dshvv-1300009960.cos.ap-beijing.myqcloud.com/shell/imvn.sh && chmod 755 ./imvn.sh && ./imvn.sh  && rm -rf ./imvn.sh
+```
+安装完成后，记得修改下mvn的下载源
+![](https://img.dingshaohua.com/book-fe/202411231508297.png)
+
+提供一份配置好源的setting.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<settings xmlns="http://maven.apache.org/SETTINGS/1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/SETTINGS/1.2.0 https://maven.apache.org/xsd/settings-1.2.0.xsd">
+  <pluginGroups>
+  </pluginGroups>
+  <proxies>
+  </proxies>
+  <servers>
+  </servers>
+  <mirrors>
+    <mirror>
+      <id>aliyunmaven</id>
+      <mirrorOf>*</mirrorOf>
+      <name>阿里云公共镜像源</name>
+      <url>https://maven.aliyun.com/repository/public</url>
+    </mirror>
+  </mirrors>
+  <profiles>
+  </profiles>
+</settings>
+```
+
+
+
+
+
+
+## 环境变量
+编译前前端项目，需要node、java、git拉取代码，等等各种软件环境，  
+
+  
+当然你可以额外到`全局工具配置`和`插件管理`中取添加这些，    
+但是我觉得比较麻烦，    
+何况你已经通过全局的方式安装好了如上软件（只是jenkins并不能拿到）。  
+
+怎么让jenkins识别到你安装的全局软件呢？   
+很简单，配置jenkins的环境变量就可以！
+
+输入`echo $PATH` 获取当前服务器的环境变量，将其copy下来
+然后进入jenkins的`系统管理>系统配置>全局属性>新增`
+将其粘贴到这里即可
+![](https://img.dingshaohua.com/book-fe/202411231508298.png)

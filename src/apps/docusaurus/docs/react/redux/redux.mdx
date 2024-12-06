@@ -1,0 +1,162 @@
+---
+hide_title: true
+sidebar_position: 1
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import store from "!!raw-loader!/src/components/DocsRedux/LuoyongApp/store/index.js";
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+
+<img src="https://img.dingshaohua.com/book-fe/202411222113359.svg" width="400" style={{margin:'0 auto', display:'block', padding: '20px'}}/>
+
+
+Redux 是 JavaScript 应用的状态容器，帮你管理“全局”状态。  
+
+Redux 体小而精悍， 是一个独立的 JS 库，不限制任何js框架均可使用，即使您没有设置用户界面，您也可以创建和使用 Redux Store。
+:::tip 提示
+这也意味着您可以将 Redux 与任何 UI 框架（甚至没有任何UI 框架如服务器上）一起使用。您可以使用 React、Vue、Angular、jQuery 编写 Redux 应用程序。
+:::
+
+## Redux 术语
+
+<img src="https://img.dingshaohua.com/book-fe/202411222113894.png" width="300"/>
+图1-2
+
+从组件中提取共享 state，并将其放入组件树之外的一个集中位置。这样，我们的组件树就变成了一个大“view”，任何组件都可以访问 state 或触发 action，无论它们在树中的哪个位置！
+
+通过定义和分离 state 管理中涉及的概念并强制执行维护 view 和 state 之间独立性的规则，代码变得更结构化和易于维护。
+
+这就是 Redux 背后的基本思想：应用中使用集中式的全局状态来管理，并明确更新状态的模式，以便让代码具有可预测性。
+### state
+state就是你存在全局的状态，一个纯js对象。比如
+```javascript
+const state = {
+  msg: '张三'
+}
+```
+我们不能直接修改state的值，因为这回造成数据来源不可预估，无法跟踪。况且redux也不允许直接修改，要求必须强制使用 action来修改，下边来具体说action。
+
+### action
+
+action 是一个具有 type 字段的普通 JavaScript 对象。你可以将 action 视为描述应用程序中`发生了什么`。    
+action 对象可以有其他字段，按照惯例，我们将该信息放在名为 payload 的字段中。  
+一个典型的 action 对象可能如下所示：
+
+```javascript
+const setMsgAction = {
+  type: "SET_MSG",
+  payload: "李四",
+};
+```
+为了把 action 和 state 串起来，开发一些函数，这就是 reducer。下边来具体说reducer。
+
+### reducer
+reducer 只是一个接收 state 和 action，并返回新的 state 的函数
+
+```javascript
+const initialState = { msg: "张三" };
+
+function reducer(state = initialState, action) {
+  if (action.type === "SET_MSG") {
+    // 检查 reducer 是否关心这个 action
+    return { ...state, msg: action.payload };
+  }
+  return state; // 返回原来的 state 不变
+}
+```
+
+这差不多就是 Redux 思想的全部，至此我们还没有使用任何 Redux 的 API，但是已经完成了一个全局状态，并且可以使用，如下
+```javascript title="/src/pages/index.tsx"
+reducer({ type: "SET_MSG", payload: "李四" })
+console.log(initialState)
+```
+Redux 里有一些方法来简化这种模式，但是主要的想法是如何根据这些 action 对象来更新 state，90% 的代码都是纯 JavaScript，并没有其他特别高深的东西。下边来聊聊 store（也就是Redux）
+
+### store
+store 是Redux的核心的主要体现。   
+:::tip 提示
+store 是通过传入一个 reducer 来创建的（createStore接受一个reducer作为参数），store 的对象里存入了当前 Redux 应用的状态，store 里还提供了读写状态数据的操作。
+:::
+
+<CodeBlock language="js" title="src/store/index.js">{store}</CodeBlock>
+
+
+**getState**  
+获取当前 state 状态值
+
+```javascript title="/src/pages/App.tsx"
+import store from "/src/store/index.tsx";
+const { msg } = store.getState();
+console.log(msg); // 张三
+```
+
+**dispatch**  
+Redux store 有一个方法叫 dispatch。  
+更新 state 的唯一方法是调用 store.dispatch() 并传入一个 action 对象。  
+store 将执行所有 reducer 函数并计算出更新后的 state，调用 getState() 可以获取新 state。
+
+```javascript title="/src/components/Tips.tsx"
+import store from "/src/store/index.tsx";
+
+store.dispatch({ type: "SET_MSG", payload: "李四" });
+const { msg } = store.getState();
+console.log(msg); // 李四
+```
+
+**subscribe**  
+state 变化监听器。每当 dispatch action 的时候就会执行。    
+你可以在回调函数里调用 getState() 来拿到当前 state。
+
+```javascript title="/src/pages/App.tsx"
+import store from "/src/store/index.tsx";
+
+store.subscribe(() => {
+  const { msg } = store.getState();
+  console.log(msg); // 李四
+});
+```
+:::tip 提示
+redux提供的dispatch和subscribe是不是和发布订阅者模式的emit和on及其类似？没错其实本质就是这样的。 redux想做的就是改变了状态之后，还需要通知订阅者。这就是是redux帮忙我们内部实现好提供给我们用的工具之一。
+:::
+
+
+## Redux 数据流
+
+如图1-2，Redux状态的管理，其实是单项流动的，简称“单向数据流”，它描述了更新应用程序的以下步骤序列：
+```shell
+1. State 描述了应用程序在特定时间点的状况
+2. 基于 state 来渲染 UI
+3. 当发生某些事情时（例如用户单击按钮），state 会根据发生的事情进行更新
+4. 基于新的 state 重新渲染 UI
+```
+
+具体来说，对于 Redux，我们可以将这些步骤分解为更详细的内容：
+<Tabs>
+  <TabItem value="初始启动" label="初始启动" default>
+
+```shell
+1. 使用最顶层的 root reducer 函数创建 Redux store
+2. store 调用一次 root reducer，并将返回值保存为它的初始 state
+3. 当 UI 首次渲染时，UI 组件访问 Redux store 的当前 state，并使用该数据来决定要呈现的内容。同时监听 store 的更新，以便他们可以知道 state 是否已更改。
+```
+
+  </TabItem>
+
+  <TabItem value="更新环节" label="更新环节">
+
+```shell
+1. 应用程序中发生了某些事情，例如用户单击按钮
+2. dispatch 一个 action 到 Redux store，例如 dispatch({type: 'counter/increment'})
+3. store 用之前的 state 和当前的 action 再次运行 reducer 函数，并将返回值保存为新的 state
+4. store 通知所有订阅过的 UI，通知它们 store 发生更新
+5. 每个订阅过 store 数据的 UI 组件都会检查它们需要的 state 部分是否被更新。
+6. 发现数据被更新的每个组件都强制使用新数据重新渲染，紧接着更新网页
+```
+
+  </TabItem>
+</Tabs>
+
+动画的方式来表达数据流更新：   
+<img src="https://img.dingshaohua.com/book-fe/202411222113529.gif" width="400"/>

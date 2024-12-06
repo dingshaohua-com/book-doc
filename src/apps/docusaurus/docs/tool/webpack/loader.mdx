@@ -1,0 +1,173 @@
+---
+hide_title: true
+sidebar_position: 4
+sidebar_label: loader
+---
+
+
+默认情况下webpack 自身只理解和处理 Js和json文件（开箱子带的能力），但是我们项目中还存在着许多其它模块类型的文件。    
+当js文件中 import 导入任何类型的模块（例如ts、css、、less、img文件），webpack便无法理解了。     
+好在webpack开放了允许三方扩展，来让webpack支持对其它模块的理解和处理，它就是loader。
+
+loader 用于对模块的源代码进行转换。loader 可以使你在 import 或 "load(加载)" 模块时预处理文件。
+如果导入了非js模块，在没有配置对应文件的loader下 运行 `npx webpack` 将报错：无法处理xx（如ts、css）模块类型，请安装对应loader。
+
+## 配置项
+在 webpack 的配置中，loader 有两个属性：
+```
+test 属性，识别出哪些文件会被转换。
+use 属性，定义出在进行转换时，应该使用哪个 loader。
+```
+
+## 来个简单的例子
+比如 让webpack 理解处理txt文件模块，
+在项目中安装处理 txt模块的loader
+```shell
+yarn add --dev raw-loader 
+```
+
+在`webpack.config.js`中配置
+```js title=webpack.config.js
+const path = require('path');
+
+module.exports = {
+    mode: "development",
+    entry: './src/index.js',
+    output: {
+        filename: 'main.js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    module: {
+        rules: [{ test: /\.txt$/, use: 'raw-loader' }]
+    }
+};
+```
+
+我们来使用下
+入口文件./src/index.js 代码如下
+```js title=./src/index.js
+import a from "./a.txt";
+console.log(a); // 其中a.txt 只有一行文字 `hello world`
+```
+
+
+
+最后我们来执行`npx webpack`执行打包，   
+并将打包后的js文件引入页面 打开页面看看效果
+
+![](https://img.dingshaohua.com/book-fe/202411231553511.png)
+
+
+
+## 一些常用的例子
+### 使用loader来处理css
+**css-loader**    
+会对 导入的css模块做处理，解析出css模块文件的内容。    
+安装完成后，在webpack文件里配置即可。
+```js title=webpack.config.js
+rules: [{ test: /\.css$/i, use: 'css-loader' }],
+```
+
+同样的 对一下代码执行打包命令后，执行打包后的js文件
+```js title=./src/index.js
+import style from "./style.css";
+
+console.log(style);
+```
+![](https://img.dingshaohua.com/book-fe/202411231553512.png)
+
+
+此时，你的css文件内容也只读取出内容而以，但是和你的页面样式并没有什么关联，如需作用到页面，你需要自行处理，比如下边两种方案
+```js title=./src/index.js
+import style from "./style.css";
+
+// 在页面的head标签中插入一个link css的标签
+const [[path, content]] = style;
+const cssLink = document.createElement('link');
+cssLink.rel = 'stylesheet';
+cssLink.href = path;
+document.head.appendChild(cssLink);
+```
+或者
+```js title=./src/index.js
+import style from "./style.css";
+
+// 在页面的head标签中插入一个style节点
+const [[path, content]] = style;
+const styleNode = document.createElement('style');
+styleNode.innerText = content;
+document.head.appendChild(styleNode);
+```
+
+
+**style-loader**   
+如果你觉得 css-loader 处理的不够好，还需要额外自己手动作用到页面，那么这个插件就是解决这个问题的：把 CSS 插入到 DOM 中
+
+```js title=webpack.config.js
+const path = require('path');
+
+module.exports = {
+    mode: "development",
+    entry: './src/index.js',
+    output: {
+        filename: 'main.js',
+        path: path.resolve(__dirname, 'dist')
+    },
+    module: {
+        rules: [
+            {
+                test: /\.css$/i,
+                use: [
+                    // style-loader插入模式为styleTag（默认）的时候，
+                    // 需要css-loader拿到具体的样式内容，所以需要先由css-loader处理下
+                    'style-loader',  
+                    'css-loader' 
+                ],
+            },
+        ],
+    },
+};
+```
+
+
+
+入口文件 代码如下
+```js title=./src/index.js
+import "./a.txt";
+```
+
+这样就直接会将样式 以style的形式 插入到页面的head中。   
+如果你想以link的方式插入外部文件，则配置loader的插件参数即可
+```js title=webpack.config.js
+rules: [
+    {
+        test: /\.css$/i,
+        use: [
+          // style-loader插入模式为linkTag的时候，
+          // 需要file-loader拿到具体的样式文件的地址，所以需要先由file-loader处理下
+          { loader: "style-loader", options: { injectType: "linkTag" } },
+          { loader: "file-loader" },
+        ]
+    }
+]
+```
+
+**less-loader**   
+如果你用less编写样式，那么很简单，只需安装less-loader处理即可
+```js title=webpack.config.js
+module.exports = {
+  module: {
+    rules: [
+      {
+        test: /\.less$/i,
+        use: [
+          // compiles Less to CSS
+          'style-loader',
+          'css-loader',
+          'less-loader',
+        ],
+      },
+    ],
+  },
+};
+```

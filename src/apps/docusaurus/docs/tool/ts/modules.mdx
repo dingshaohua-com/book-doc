@@ -1,0 +1,223 @@
+---
+hide_title: true
+sidebar_position: 9
+sidebar_label: 模块
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+Ts1.5 里术语名已经发生了变化。  
+“内部模块”现在称做“命名空间”。  
+“外部模块”现在则简称为“模块”。  
+这是为了与 ECMAScript 2015 里的术语保持一致。
+
+## 基础知识
+
+早在 esm 之前，ts 就率先让前端开发者使用上了模块化技术。
+
+```js
+import "xx";
+import xx from "xx";
+import * as xx from "xx";
+import { x } from "xx";
+export const a = 1;
+export default {};
+export xx from "xx";
+```
+
+不过目前 js 已经支持，所以本章大部分和 esm 重复部分不再介绍。只介绍一些特殊部分。
+
+## 类型的导入导出
+
+和 esm 普通导入导出用法一致，
+
+```ts title="type.ts"
+export interface People {
+  name: string;
+  age: number;
+}
+
+export type Teacher = {
+  name: string;
+  teach(): void;
+};
+```
+
+```ts title="index.ts"
+import { People, Teacher } from "./type";
+
+const people: People = {
+  name: "张三",
+  age: 20,
+};
+const teacher: Teacher = {
+  name: "张老师",
+  teach() {
+    console.log("体罚+训诫");
+  },
+};
+```
+
+## 类型声明文件
+
+ts 约定以`.d.ts`为结尾的文件是 专门用于存放类型定义的文件（如果你熟悉 C/C++，你可以把它们当做 .h 文件）。  
+一般我将其称其 `外部声明文件`或者`类型定义文件`。它不负责“外部程序”的具体业务逻辑实现，只是用于辅助外部程序的类型声明。
+
+1. 类型声明文件只负责类型定义，不负责业务代码。
+2. .d.ts 文件中的顶级声明必须以 "declare" 或 "export" 修饰符开头。
+3. declare 或者 export 的顶级声明的类型定义 可以直接使用，不用导入.d.ts 文件。
+4. .d.ts 命名无所谓，最终都是会被全局识别。
+5. 在声明文件中 type 与 interface 也可以省略 declare ，效果相同
+6. declare 与 export 不要同级使用，否则声明文件就需要导入了
+
+### declare
+
+如上所说，declare 是用来修饰.d.ts 文件中的顶级声明。那么顶级声明具体有哪些呢？  
+也就是说.d.ts 文件可以定义什么呢？
+
+声明一个类型
+
+```ts title="global.d.ts"
+declare type People = {
+  name: string;
+  age: number;
+};
+
+declare interface Teacher {
+  name: string;
+  age: number;
+}
+```
+
+```ts title="index.ts"
+const t: Teacher = {
+  // 类型“{}”缺少类型“Teacher”中的以下属性: name, age
+};
+```
+
+声明一个变量
+
+```ts title="global.d.ts"
+declare const foo: number;
+declare const jQuery: (selector: string) => any;
+declare function sum(a: number, b: number): number;
+```
+
+```ts title="index.ts"
+foo.charAt(1); // 编译报错：类型“number”上不存在属性“charAt”。
+jQuery(1); // 编译报错：类型“number”的参数不能赋给类型“string”的参数
+sum(1); //编译报错： 应有 2 个参数，但获得 1 个
+```
+
+声明一个模块
+
+```ts title="global.d.ts"
+declare module "utils" {
+  // 按需导出
+  export const name: string;
+
+  // 默认导出
+  interface Utils {
+    version: string;
+  }
+  const utils: Utils;
+  export default utils;
+}
+
+// 或者我们最常用的 这样，我们可以在ts中引入相关的文件而不报错了
+// declare module "*.css";
+// declare module "*.less";
+// declare module "*.png";
+
+// 再来个vuex官方的 vuex.d.ts , 在vue的实例上声明增加$store属性
+// import { ComponentCustomProperties } from "vue";
+// import { Store } from "vuex";
+// declare module "@vue/runtime-core" {
+//   interface State {
+//     count: number;
+//   }
+//   interface ComponentCustomProperties {
+//     $store: Store<State>;
+//   }
+// }
+```
+
+```ts title="index.ts"
+import { name } from "utils"; // 按需导出 的使用
+import utils from "utils"; // 默认导出 的使用
+
+utils.version;
+```
+
+声明一个作用域
+
+```ts title="global.d.ts"
+declare namespace API {
+  function getTeachers(id: number): Array<any>;
+}
+```
+
+```ts title="index.ts"
+API.getTeachers(2022);
+```
+
+:::tip 注意
+如果违反了第 6 条，导致你的类型文件需要引入到 ts，我们引入即可。注意引入方式：
+
+```ts title="index.ts"
+/// <reference path="global.d.ts"/>
+```
+
+:::
+
+### js 库支持
+
+其实类型文件的存在的主要目的是为了方便支持 js 库的。
+
+要想描述非 TypeScript 编写的类库的类型，我们在 ts 使用的时候 就会提示库和库中的成员不成在，这就需要我们帮忙声明类库所暴露出的 API，以便在 ts 中正常使用。
+
+```ts title="global.d.ts"
+// 给node_modules的utils模块 添加类型定义支持
+declare module "utils" {
+  // 按需导出
+  export const name: string;
+
+  // 默认导出
+  interface Utils {
+    version: string;
+  }
+  const utils: Utils;
+  export default utils;
+}
+```
+
+```ts title="index.ts"
+// utils是引入node_modules下边的三方模块
+// 假设这个模块只支持js 其作者并没有在包里提供类型文件
+import utils from "utils";
+
+console.log(utils.version);
+```
+:::tip 注意
+[DefinitelyTyped](https://github.com/DefinitelyTyped/DefinitelyTyped) 是 TypeScript 最大的优势之一，社区已经记录了 90% 的顶级 JavaScript 库。这意味着大部分情况下 三方的js模块库都有人帮其扩展类型定义文件，这样我们就免去了上边麻烦的工作。 例如
+```shell
+yarn add --dev @types/lodash
+```
+:::
+
+另外， 如果你是通过cdn引入的全局变量，比如utils是挂在到window中（就像jquery那样）。   
+也可以像如上的办法使用，作用力相同。
+
+
+### 扩充已有的类型 
+比如最常用的windows
+```ts title="global.d.ts"
+declare interface Window {
+  foo: string;
+}
+```
+```ts title="index.ts"
+window.foo = '123';
+console.log(window.foo);
+```

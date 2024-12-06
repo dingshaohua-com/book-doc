@@ -1,0 +1,39 @@
+---
+hide_title: true
+sidebar_position: 5
+sidebar_label: 名字和icon
+---
+
+
+## 自定义app名字
+1、默认情况下，是跟你的项目名字一致。自定义名字需要在入如下地方修改
+src/main/res/values/strings.xml
+```xml
+<string name="app_name">测试</string>
+```
+
+<img src="https://img.dingshaohua.com/book-fe/20221107155101.png" width="600" />
+
+
+2、或者修改如下配置也行
+demo/app/src/main/AndroidManifest.xml
+```xml
+android:label="@string/app_name"
+```
+<img src="https://img.dingshaohua.com/book-fe/20221107155102.png" width="600" />
+
+## 自定义app的icon
+1、了解基本知识：   
+在sdk26（即安卓8）以下，会自动匹配不同分辨率对应文件夹下的icon。   
+在API 26+设备则资源系统将优先使用其mipmap-anydpi-v26文件夹中的文件。 
+<img src="https://img.dingshaohua.com/book-fe/20221107155103.png" width="600" />  
+
+2、在线生成icon   
+https://icon.wuruihong.com/icon
+
+3、生成的icon拖动到资源目录下demo/app/src/main/res   
+注意，需要把mipmap-anydpi-v26随意改个名字 如mipmap-anydpi-v261，
+因为我们暂时不用动态适配icon功能，普通的就行
+如若不然，自定义的图标不生效
+<img src="https://img.dingshaohua.com/book-fe/20221107155104.png" width="600" />  
+然后再打包就行了

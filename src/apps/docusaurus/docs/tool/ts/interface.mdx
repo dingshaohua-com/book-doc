@@ -1,0 +1,340 @@
+---
+hide_title: true
+sidebar_position: 6
+sidebar_label: 接口
+---
+
+
+
+
+## 基础知识
+ts的核心原则之一是对值所具有的结构进行类型检查。    
+而ts里接口的作用就是为这些类型命名和为你的代码或第三方代码定义契约。
+```ts
+interface People {
+    name: string;
+}
+
+const xiaohong: People = { name: "小红"};
+```
+
+People接口就好比一个名字，用来描述上面例子里的要求。 它代表了有一个 name属性且类型为string的对象。 
+:::tip
+需要注意的是，我们在这里并不能像在其它语言里一样，说传给 People的对象实现了这个接口。我们只会去关注值的外形。 只要传入的对象满足上面提到的必要条件，那么它就是被允许的。
+:::
+
+### 可选属性
+在ts中
+接口里的属性不全都是必需的。 有些是只在某些条件下存在，或者根本不存在。 可选属性在应用“option bags”模式时很常用，即给函数传入的参数对象中只有部分属性赋值了。
+
+```ts
+interface People {
+    name: string;
+    age?: number;
+}
+
+function showTime(people: People): void {
+    if (people.age) {
+        console.log(`我叫${people.name}，今年${people.age}岁了`);
+    } else {
+        console.log(`我叫${people.name}`);
+    }
+}
+
+showTime({ name: '小红' })
+showTime({ name: '小兰', age: 18 })
+```
+如上表示 showTime的参数 肯定有一个string类型的name属性，    
+另外可能会有number类型的age属性（即如果age属性，则必须是number类型的）。
+
+### 只读属性
+一些对象属性只能在对象刚刚创建的时候修改其值。        
+你可以在属性名前用 readonly来指定只读属性:
+```ts
+interface People {
+    readonly name: string;
+}
+
+const p:People =  { name: '小红' };
+p.name = '小明'; // 错误：无法分配到 "name" ，因为它是只读属性
+```
+
+readonly 还是 const？    
+最简单判断该用readonly还是const的方法是看要把它做为变量使用还是做为一个属性。 做为变量使用的话用 const，若做为属性则使用readonly。
+
+### 额外的属性检查
+不是不确定某个属性是否存在，而是连存在哪些属性会有都不确定    
+额外属性就是不缺定需不需要该属性的，未知的属性 
+
+比如说 后端返回了一个people类型的对象，只知道肯定有string类型的name字段，或可能还有其它字段。   
+除了类型断言外 这在ts中比较好的做法是这么定义 `使用字符串索引签名 来允许额外属性`
+```ts
+interface Person {
+    name: string;
+    [propName: string]: any //使用字符串索引签名 来允许额外属性
+}
+
+let obj1: Person = {
+    name: '张三',
+    age: 30
+}
+
+let obj2: Person = {
+    name: '李四',
+    age: 30,
+    height: 100,
+}
+```
+
+### 继承
+和类一样，接口也可以相互继承。这样便可以更灵活地将接口分割到可重用的模块里。
+```ts
+interface People {
+    name: string;
+}
+
+interface Teacher extends People{
+    teach(); // 教学
+}
+
+const tc:Teacher = {
+    name: '张三',
+    teach() {
+       console.log('教学');
+    } 
+}
+```
+一个接口可以继承多个接口，创建出多个接口的合成接口
+```ts
+interface People {
+    name: string;
+}
+
+interface Teacher{
+    teach(); // 教学
+}
+
+interface HeadTeacher extends People, Teacher{
+    heartTalk(); // 谈心
+}
+
+const htc:HeadTeacher = {
+    name: '张三',
+    teach() {
+        console.log('教学');
+    },
+    heartTalk: function () {
+        console.log('谈心');
+    }
+}
+```
+
+接口继承类，这个其语言是没有的。   
+虽然ts支持，不过我们也尽量别这么做，实际用途很少。   
+当接口继承了一个类类型时，它会继承类的成员但不包括其实现。 就好像接口声明了所有类中存在的成员，但并没有提供具体实现一样。 
+```ts
+class People{
+    name: string;
+    sayName(){
+        console.log(this.name);
+    }
+}
+
+interface Teacher extends People{
+    teach();
+}
+
+const tc:Teacher = {
+    name: '张三',
+    sayName(){
+        console.log('名字');
+    },
+    teach(){
+        console.log('教学');
+    }
+}
+```
+另外 接口同样会继承到类的private和protected成员。     
+这意味着当你创建了一个接口继承了一个拥有私有或受保护的成员的类时，这个接口类型只能被这个类或其子类所实现（implement）。
+```ts
+class People {
+    private sayName() {
+        console.log('People-sayName');
+    }
+}
+
+interface Teacher extends People {
+    teach();
+}
+
+class HeadTeacher extends People implements  Teacher {
+    teach() {
+        console.log('HeadTeacher-teach');
+    }
+}
+```
+
+## 函数类型
+接口能够描述（如上例子中）Js中对象拥有的各种各样的外形。     
+除了描述带有属性的普通对象外，接口也可以描述函数类型。
+
+
+举个例子
+根据位置获取字符   
+source为字符串   
+pos为位置，若不传则返回源字符串   
+
+一开始我们是这么声明的
+```ts
+function fn(str: string, pos?: number): string{
+    if(pos){
+        return str.charAt(pos);
+    }else {
+        return str;
+    }
+}
+
+fn('hello',2);
+```
+或者
+```ts
+const fn = (str: string, pos?: number): string=>{
+    if(pos){
+        return str.charAt(pos);
+    }else {
+        return str;
+    }
+}
+
+fn('hello',2);
+```
+
+现在我们可以直接利用接口来抽离出类型定义部分代码，定义一个`函数类型的接口`
+```ts
+interface GetstrBypos {
+    (source: string, pos?: number): string;
+}
+
+/**
+* 根据位置获取字符
+* source为字符串 
+* pos为位置，若不传则返回源字符串
+*/
+const fn:GetstrBypos = (str, pos)=>{
+    if(pos){
+        return str.charAt(pos);
+    }else {
+        return str;
+    }
+}
+
+fn('hello',2);
+```
+
+可以看到 ts在为函数类型做检查的时候，形参名称并不重要。      
+只要类型和个数对得上就行，其实这也正是其他强语言得函数签名元素要求。
+
+
+## 可索引的类型
+绝大多数情况下，我们都可以在使用对象前就确定其的结构，并为其添加准确的类型。       
+但当我们无法确定对象中有哪些或多少个属性时，就用到索引签名类型了。
+
+可索引类型的定义具有一些特征：   
+1、索引签名，它描述了对象索引的类型。   
+2、还有相应的索引返回值类型。         
+
+```ts
+// 可索引的类型接口定义
+interface Person {
+    [key: string]: string //使用字符串索引签名 来允许额外属性
+}
+// 来使用
+const p: Person = {name: '张三'};
+p.name.toFixed(); //错误：属性“toFixed”在类型“string”上不存在。
+
+// 使用 `[key: string]` 来约束该接口中允许出现的属性名称。表示只要是string类型的属性名称，都可以出现在对象中。   
+// 这样，对象 p 中就可以出现任意多个属性（比如，name等）。       
+// key 只是一个占位符，可以换成任意合法的变量名称。  
+``` 
+
+
+其实数组也可以使用可索引的类型，   
+因为在js中，数组也是可索引的（js中数组不也是对象吗）。
+```ts
+// 可索引的类型接口定义
+interface StringArray {
+    // 索引签名 定义
+    [index: number]: string|boolean;
+}
+
+// 来使用
+let myArray1: StringArray = ["a", true]; 
+myArray1[2] = 1; // 错误：不能将类型“1”分配给类型“string | boolean”。
+let myArray2: StringArray = ["a", true, 1]; // 错误：不能将类型“number”分配给类型“string | boolean”
+myArray1[0].toFixed(); //错误：类型“string | boolean”上不存在属性“toFixed”
+
+// 如上，我们会发现一个弊端，无法将myArray1同时定义为数组类型，若使用`myArray1.push(xx)`就会报错。那用接口继承就好了 下边会讲
+// interface StringArray extends Array<any>  {
+//     // 索引签名 定义
+//     [index: number]: string|boolean;
+// }
+```
+
+可索引的类型实际用途如：字符串索引签名能够很好的描述dictionary（字典）模式，并且它们也会确保所有属性与其返回值类型相匹配。
+
+## 类类型
+接口不但可以用来描述 基本变量和方法，还可以用来约束类。
+
+其使用方法和C#或Java里接口的基本作用一样，通过关键字`implements`，即实现接口
+```ts
+interface People {
+    name: string;
+    setName(name: string);
+}
+
+class Teacher implements People {
+    name: string;
+    setName(name: string){
+        this.name = name;
+    }
+}
+```
+:::tip
+接口内只能声明变量/方法，不能初始化/实现。       
+可以看作 接口比抽象类更抽象。
+:::
+
+
+## 混合类型
+先前我们提过，接口能够描述Js里丰富的类型。     
+因为Js其动态灵活的特点，有时你会希望一个对象可以同时具有上面提到的多种类型。    
+通常在使用Js第三方库的时候，你可能需要像上面那样去完整地定义类型。   
+
+
+举个例子，下边utils对象 同时做为函数和对象使用，且还带有额外的属性。    
+这些都可以利用 混合类型类型来实现定义。
+```ts
+interface Utils {
+    (): string; // 本身是一个函数
+    version: string; // 属性version
+    getTime(): string; // 方法getTime
+}
+
+function UtilsWrapp(): Utils {
+    const U = <Utils>function () { return '我被执行了' };
+    U.version = '1.0.0';
+    U.getTime = function () { return new Date().toDateString() }
+    return U;
+}
+const Utils = UtilsWrapp();
+
+console.log(Utils());
+console.log(Utils.version);
+console.log(Utils.getTime());
+
+```
+
+
+
+参考   
+https://blog.csdn.net/Svik_zy/article/details/123329920

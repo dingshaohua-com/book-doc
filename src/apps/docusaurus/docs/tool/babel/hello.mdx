@@ -1,0 +1,252 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: 初步使用
+---
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## 核心库
+
+Babel 的核心功能包含在 @babel/core 模块中。通过以下命令安装
+
+```shell
+yarn add --dev  @babel/core
+```
+
+你可以在 Js 程序中直接 require 并使用它：
+
+```js
+const babel = require("@babel/core");
+
+// 参数
+const code = 'const i = 123;';
+const options = {
+    plugin:[
+        'babel/plugin-transform-block-scoping'
+    ]
+};
+
+// 执行转换
+const res = babel.transformSync(code, options);
+
+// 打印转换后的代码: var i = 123;
+console.log(res.code);
+```
+
+## 终端工具库
+
+@babel/cli 是一个能够从终端（命令行）使用的工具。通过以下命令安装
+
+```shell
+yarn add --dev @babel/core @babel/cli
+```
+
+基本用法如下
+
+```shell
+npx babel src --out-dir lib
+```
+
+这将解析 src 目录下的所有 Js 文件，并应用我们所指定的代码转换功能（通过插件或预设），然后把每个文件输出到 lib 目录下。由于我们还没有指定任何代码转换功能，所以输出的代码将与输入的代码相同。
+
+## 插件和预设
+
+代码转换功能以[插件](https://www.babeljs.cn/docs/plugins)的形式出现，插件是小型的 Js 程序，用于指导 Babel 如何对代码进行转换。你甚至可以编写自己的插件将你所需要的任何代码转换功能应用到你的代码上。
+
+例如将 es6 的箭头函数转为 es5 普通函数，我们可以使用官方插件 `@babel/plugin-transform-arrow-functions` ：
+
+```shell
+yarn add --dev @babel/plugin-transform-arrow-functions
+npx babel ./src/index.js --out-dir dist --plugins=@babel/plugin-transform-arrow-functions
+```
+
+<Tabs>
+<TabItem value="源代码" label="源代码">
+
+```js
+let a = 1;
+let b = 2;
+const add = () => a + b;
+console.log(add(a, b));
+```
+
+</TabItem>
+<TabItem value="转换后" label="转换后">
+
+```js
+let a = 1;
+let b = 2;
+const add = function () {
+  return a + b;
+};
+console.log(add(a, b));
+```
+
+</TabItem>
+</Tabs>
+
+这是个好的开始！但是我们的代码中仍然残留了其他 ES2015+ 的特性，我们希望对它们也进行转换。我们不需要一个接一个地添加所有需要的[插件](https://www.babeljs.cn/docs/plugins-list)，我们可以使用一个 "[preset](https://www.babeljs.cn/docs/presets)" （即一组预先设定的插件）。就像插件一样，你也可以根据自己所需要的插件组合创建一个自己的 preset 并将其分享出去。
+
+对于如上的例子，我们可以安装官方出的预设包`@babel/preset-env`，这个包里包含了很多常用的转换插件。
+
+```shell
+yarn add --dev @babel/preset-env
+npx babel ./src/index.js --out-dir dist --presets=@babel/env
+```
+
+<Tabs>
+<TabItem value="源代码" label="源代码">
+
+```js
+let a = 1;
+let b = 2;
+const add = () => a + b;
+console.log(add(a, b));
+```
+
+</TabItem>
+<TabItem value="转换后" label="转换后">
+
+```js
+var a = 1;
+var b = 2;
+var add = function add() {
+  return a + b;
+};
+console.log(add(a, b));
+```
+
+</TabItem>
+</Tabs>
+
+如果不进行任何配置，上述 preset（预设） 所包含的插件将支持所有最新的 JavaScript （ES2015、ES2016 等）特性（即识别并转换所有新语法）。
+
+正好 preset 也是支持参数的，我们来看看另一种传递参数的方法：配置文件，而不是通过终端控制台同时传递 cli 和 preset 的参数。
+
+## 配置文件
+
+现在，我们首先创建一个名为 babel.config.json 的文件，并包含如下内容
+
+```js
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "chrome": "67"
+        }
+      }
+    ]
+  ]
+}
+```
+执行命令如下（你会发现命令变得短了，因为参数都在配置文件里了）
+```shell
+npx babel ./src/index.js --out-dir dist
+```
+现在，预设 `preset-env` 只会为目标浏览器中没有的功能加载转换插件。不再会加载所有插件并转换所有代码了 。
+:::tip
+随着低版本的浏览器逐步淘汰，一些新特性的语法在新浏览器已经支持，可能几年后大家已经不在使用 IE，如果一股脑的全部兼容打包的体积也会变大。是否有必要全部转换成 es5，我们更希望他可以根据你所配置的浏览器的列表，自动的去加载当前浏览器所需要的插件，然后对 es 语法做转换。
+:::
+
+## 垫片
+
+babel 默认情况下 只转换语法如箭头函数, let, const, class等等），而不会处理新特/api（如 Set，Map，Array的from方法、Promeise等等）。
+
+<Tabs>
+<TabItem value="源代码" label="源代码">
+
+```js
+const promise = Promise.resolve("hello");
+promise.then((res) => {
+  console.log(res);
+});
+```
+
+</TabItem>
+<TabItem value="转换后" label="转换后">
+
+```js
+var promise = Promise.resolve("hello");
+promise.then(function (res) {
+  console.log(res);
+});
+```
+
+</TabItem>
+</Tabs>
+
+可以看到新特性Promise 没有做处理。这就会导致，即使使用babel转换过的代码，浏览器依然存在兼容问题。
+
+![](https://img.dingshaohua.com/book-fe/202411231615618.png)
+
+有一个俄罗斯的小伙子发明了这一个叫做`core-js`的库，正好是处理新 api，于是两者互补。
+你可以通过模块化导入或者cdn方式引入 来模拟完整的 ES2015+ 环境。
+```html
+<script src="https://cdn.bootcdn.net/ajax/libs/core-js/3.23.4/minified.js"></script>
+```
+```js
+import "core-js/stable";
+
+const promise = Promise.resolve('hello');
+promise.then(res=>{
+    console.log(res);
+})
+```
+
+如上方式虽然解决了问题，但是会引入全部特性的垫片(core-js/stable包含所有的垫片内容)，而我只需要里边的Promise的垫片。   
+别着急@babel/preset-env这个预设提供了一个useBuiltIns配置项，设置后我们再次编译。   
+它会自动分析并引入你代码中需要哪些垫片内容。
+```js
+{
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ]
+}
+```
+
+<Tabs>
+<TabItem value="源代码" label="源代码">
+
+```js
+const promise = Promise.resolve("hello");
+promise.then((res) => {
+  console.log(res);
+});
+```
+
+</TabItem>
+<TabItem value="转换后" label="转换后">
+
+```js
+require("core-js/modules/es.object.to-string.js");
+require("core-js/modules/es.promise.js");
+
+var promise = Promise.resolve('hello');
+promise.then(function (res) {
+  console.log(res);
+});
+```
+
+</TabItem>
+</Tabs>
+
+
+:::warning
+babel默认只处理JS， 且不处理模块，不打包，只做代码转换！
+:::
+
+
+## 小结
+1. babel分为核心包和终端工具包，这两个包是babel的基石。
+2. babel如果不配置任何插件或者预设 那么处理后的代码和源码保持一致，不做任何转换。
+3. babel只转换语法，不转换新增api，新增api需要使用垫片解决。
+4. babel默认只处理js，且只处理js语法转换，并不处理打包。

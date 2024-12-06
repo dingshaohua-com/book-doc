@@ -1,0 +1,33 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: 初步使用
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+## 安装
+
+```shell
+pnpm install --d prettier
+```
+
+
+## 配置文件
+
+创建一个配置文件，如下
+```js title="prettier.config.js"
+module.exports = {
+  tabWidth: 2, // 缩进2个空格
+  useTabs: false, // 缩进单位是否使用tab替代空格
+  semi: true, // 句尾添加分号
+  singleQuote: true, // 使用单引号代替双引号
+};
+```
+
+## 使用
+```shell
+npx prettier --write .
+```
+

@@ -1,0 +1,28 @@
+---
+hide_title: true
+sidebar_position: 11
+sidebar_label: 声明合并
+---
+
+## 自动合并
+两个相同名字的命名空间，会自动合并
+```ts
+namespace API {
+  function getTeachers(id: number): Array<any>;
+}
+
+namespace API {
+  function getStudents(id: number): Array<any>;
+}
+
+// 等价于
+// namespace API {
+//   function getTeachers(id: number): Array<any>;
+//   function getStudents(id: number): Array<any>;
+// }
+
+
+API.getStudents(1);
+API.getTeachers(2);
+
+```

@@ -1,0 +1,38 @@
+---
+hide_title: true
+sidebar_position: 4
+sidebar_label: 变量与函数
+---
+
+## 变量
+除了支持`var`之外，早在es6之前ts就已经支持了`let`和`const`。   
+不过现在es6+也普及了，let和const就不再多做介绍。
+```js
+const a = 123;
+const b = 456;
+const c = 789;
+```
+
+另外在变量声明中，ts使其支持了类型
+```ts
+const str: string = 'hello';
+```
+
+
+## 函数
+和js一样ts中函数仍然是主要的定义 行为逻辑的地方。   
+而且结构取值、默认值、可选参数、箭头函数这些特性 js也已经慢慢支持。    
+
+js唯一还没有的就是 参数和返回值的类型支持
+```ts
+function add(x: number, y: number): number {
+    return x + y;
+}
+```
+
+
+## 迭代器和生成器
+之前js尚未实现，ts率先支持。  
+目前js已经支持，这里不再赘述。
+
+编译目标原生支持情况下编译器会生成相应引擎的for..of内置迭代器实现方式。否则是ts内部自己实现。

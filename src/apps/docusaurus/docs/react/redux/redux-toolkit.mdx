@@ -1,0 +1,98 @@
+---
+sidebar_position: 3
+hide_title: true
+sidebar_label: redux-toolkit
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import actionCreator from "!!raw-loader!/src/components/DocsRedux/ToolkitApp/store/action-creator.js";
+import store from "!!raw-loader!/src/components/DocsRedux/ToolkitApp/store/index.js";
+
+👉[redux-toolkit 官方文档](https://redux-toolkit.js.org) 👈
+
+## 这是啥
+
+redux-toolkit 是 Redux 官方出的工具包，用于高效的 Redux 开发。
+
+```shell
+yarn add @reduxjs/toolkit
+```
+
+## chrome 插件支持
+
+原生的写法不支持浏览器使用插件进行跟踪 debug。redux-toolkit 创建的 store 则可以
+![](https://img.dingshaohua.com/book-fe/202411222308336.png)
+
+```jsx title="/src/store/index.jsx"
+import { configureStore } from "@reduxjs/toolkit";
+
+// state
+const initialState = {
+  msg: "张三",
+};
+
+// reducer
+const reducer = (state = initialState, action) => {
+  switch (action.type) {
+    case "SET_MSG":
+      return { ...state, ...{ msg: action.payload } };
+    default:
+      return state;
+  }
+};
+
+// store
+export default configureStore({ reducer });
+```
+
+![](https://img.dingshaohua.com/book-fe/202411222308550.gif)
+
+## 编写 action creator
+
+<CodeBlock language="js" title="src/store/action-creator.js">
+  {actionCreator}
+</CodeBlock>
+
+## 编写 reducer
+
+<CodeBlock language="js" title="src/store/index.js">
+  {store}
+</CodeBlock>
+
+## 使用切片
+
+当然还有更进一步的优化写法，就是切片 Slice。  
+工具包提供一个 createSlice 函数，它接受初始状态、reducer 函数的对象，并自动生成 reducer 和 action creators 和 action types。  
+如此一来便不再需要辅助函数`creatActionCreator`、`creatReducer`，以及定义`action-creator`了。
+来让我们使用切片来定义一个 store
+
+```jsx title="/src/store/index.jsx"
+import { configureStore, createSlice } from "@reduxjs/toolkit";
+
+// state
+const initialState = {
+  msg: "张三",
+};
+
+// slice
+// slice包含 action、reducer,如果有需要可以后期结构出来用
+const slice = createSlice({
+  name: "app",
+  initialState,
+  reducers: {
+    setMsg(state, action) {
+      state.msg = action.payload;
+    },
+  },
+});
+
+// actionCreator
+// 工具会根据切片里的reducers自动生成与其同名的actionCreator
+// actionCreator通过（同样自动生成的）type和reducer进行关联，来达到更新state的目的
+export const { setMsg } = slice.actions;
+
+// store
+export default configureStore({
+  reducer: slice.reducer,
+});
+```

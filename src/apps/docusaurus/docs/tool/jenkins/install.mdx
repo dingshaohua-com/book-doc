@@ -1,0 +1,80 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: 安装
+---
+
+
+
+## 安装 JAVA
+
+jenkins 是基于 java 开发的，所以必须安装 java 环境。  
+提供一个`一键安装java v11的脚本`
+
+```shell
+curl -O https://dshvv-1300009960.cos.ap-beijing.myqcloud.com/shell/ijava11.sh && chmod 755 ./ijava11.sh && ./ijava11.sh  && rm -rf ./ijava11.sh
+```
+
+## 安装 jenkins
+
+去官网下载[最新的 war 包](http://mirrors.jenkins.io/war-stable/latest/jenkins.war)
+![](https://img.dingshaohua.com/book-fe/202411231508296.png)
+
+## 启并访问
+
+启动 jenkins
+
+```
+nohup java -jar jenkins.war &
+```
+
+现在你可以通过 [ip:8080](ip:8080)访问。
+
+不过建议你做个 nginx 代理，上边访问显的地址很丑，这里不吝啬帮你贴上教程
+
+```shell
+    # http://jenkins.dingshaohua.cn
+    server {
+       listen       80;
+       server_name  jenkins.dingshaohua.cn;
+        location / {
+            proxy_pass http://0.0.0.0:8080; #代理地址
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+        }
+    }
+
+    # https://jenkins.dingshaohua.cn
+    server {
+       listen       443 ssl;
+       server_name  jenkins.dingshaohua.cn;
+
+       ssl_certificate      /home/ssl/jenkins.dingshaohua.cn_nginx/jenkins.dingshaohua.cn_bundle.pem;
+       ssl_certificate_key  /home/ssl/jenkins.dingshaohua.cn_nginx/jenkins.dingshaohua.cn.key;
+
+       ssl_session_cache    shared:SSL:1m;
+       ssl_session_timeout  5m;
+
+       ssl_ciphers  HIGH:!aNULL:!MD5;
+       ssl_prefer_server_ciphers  on;
+
+        location / {
+            proxy_pass http://0.0.0.0:8080; #代理地址
+            proxy_set_header Host $host;
+            proxy_set_header X-Real-IP $remote_addr;
+            proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+            proxy_set_header X-Forwarded-Proto $scheme;
+            proxy_set_header X-Forwarded-Port $server_port;
+        }
+    }
+
+```
+:::tip 提示
+切记代理转发ip只能是0.0.0.0不能是127.0.0.1
+:::
+
+
+除了war包部署，还有很多其它的部署方式，只是war包比较简单。具体可以访问官网！

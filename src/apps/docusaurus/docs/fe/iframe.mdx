@@ -1,0 +1,233 @@
+---
+hide_title: true
+sidebar_position: 4
+sidebar_label: 框架
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+import MockBook from "/src/components/MockBook";
+import Fieldset from "/src/components/Fieldset";
+
+从我 2015 年入行前端一职， 经历了写过原生的三剑客 HTML/CSS/Javascript 到 jQuery 搞定一切的年代。
+
+曾经前端大多数代表着切图、拼接 JSP/PHP 模板，重页面样式而轻逻辑，工作大多数用来调节浏览器兼容。
+
+**可这短短几年，前端竟然经历了如此多的巨变！**
+
+<span style={{ fontSize: 40 }}>😂</span>
+
+前端版技术更迭如此之快，js 的版本一再升级、以及 html5、css3 的迅猛出现都让前端领域焕发着强大的生命力！
+
+前端的框架也在这个时候开始兴起，angular 最新诞生， vue 和 react 也紧随其后！
+
+```mermaid
+ graph TB;
+    框架-->angular;
+    框架-->react;
+    框架-->vue;
+```
+
+## vue
+
+![](https://img.dingshaohua.com/book-fe/202411231610232.jpg)
+由 尤雨溪 个人发明。  
+因为是国人开发的所以文档都是中文。  
+这也是国内开发者大都选择它的原因。
+
+对比原生页面学法的优点有很多：  
+1.模板语法，再也不用拼接 Dom 了。  
+2.双向绑定，无需开发关注数据和模板的关联。  
+3.模块化开发，组件和逻辑代码复用。  
+....
+
+## react
+
+![](https://img.dingshaohua.com/book-fe/202411231610233.jpg)
+react 是 facebook 出品的一个前端框架。  
+全球使用人说居多，尤其是国外！
+
+同样，它也是看到了原生的缺点，顺势而出的。   
+她和vue有很大的相似之处，两者也是竞争关系
+
+<Fieldset title="🌰 举个例子">
+
+说可能体现不出来框架优点，  
+我们来举个例子  
+假设一个需求 如下，
+
+```
+请求一个接口，接口返回学生列表。
+并支持搜索，要求按照性别加上头像。
+```
+这是效果图   
+![](https://img.dingshaohua.com/book-fe/202411231610234.jpg)
+
+这是模拟接口返回   
+```js title="api.js"
+/**
+ * 模拟学生列表接口
+ **/
+const getStudents = (search) => {
+  const data = [
+    { id: 1, name: "张三", sex: "男", class: "三年级1班" },
+    { id: 2, name: "李四", sex: "男", class: "三年级2班" },
+    { id: 3, name: "张三", sex: "男", class: "三年级2班" },
+    { id: 4, name: "小红", sex: "女", class: "三年级1班" },
+  ];
+  return search ? data.filter((item) => item.name === search && item) : data;
+};
+```
+
+我们分别用原生、vue、react 不同的写法去实现
+
+<Tabs>
+<TabItem value="原生" label="原生" default>
+
+```html title="index.html"
+<div class="wrapp">
+  <input type="search" placeholder="请输入姓名搜索" />
+  <button onclick="syncStudents()">搜索</button>
+  <div class="list"></div>
+</div>
+<script src="./api.js"></script>
+<script>
+  /**
+   * 同步学生列表到页面
+   **/
+  const syncStudents = () => {
+    const search = document.querySelector("input").value;
+    const students = getStudents(search);
+    let htmlStr = "";
+    students.forEach((item) => {
+      htmlStr += `<div class="student">
+            ${item.id} ${item.name} ${item.class}
+          </div>`;
+    });
+    document.querySelector(".list").innerHTML = htmlStr;
+  };
+
+  syncStudents();
+</script>
+```
+
+</TabItem>
+<TabItem value="vue" label="vue">
+
+```html title="index.vue"
+<template>
+  <div class="wrapp">
+    <input type="search" v-model="search" placeholder="请输入姓名搜索" />
+    <button @click="syncStudents">搜索</button>
+    <div class="list">
+      <template v-for="item in students" :key="item.id">
+        <div class="student">
+          <template v-if="item.sex === '男'">🤷‍♂️</template>
+          <template v-else>🤷‍♀️</template>
+          {{ item.id }} {{ item.name }} {{ item.class }}
+        </div>
+      </template>
+    </div>
+  </div>
+</template>
+
+<script setup>
+import { getStudents } from "./api";
+import { ref } from "vue";
+
+// 定义学生列表 状态
+const students = ref([]);
+
+// 定义搜索 状态
+const search = ref();
+
+/**
+ * 同步学生列表到页面
+ **/
+const syncStudents = () => {
+  const res = getStudents(search.value);
+  students.ref = res;
+};
+
+syncStudents();
+</script>
+```
+
+</TabItem>
+<TabItem value="react" label="react">
+
+```js title="index.jsx"
+import { getStudents } from "./api";
+import { useEffect, useState } from "react";
+
+export default () => {
+  useEffect(() => {
+    syncStudents();
+  }, []);
+
+  // 定义学生列表 状态
+  const [students, setStudents] = useState([]);
+
+  /**
+   * 同步学生列表到页面
+   **/
+  const syncStudents = () => {
+    const res = getStudents();
+    setStudents(res);
+  };
+
+  return (
+    <div class="wrapp">
+      <input type="search" placeholder="请输入姓名搜索" />
+      <button onClick={syncStudents}>搜索</button>
+      <div class="list">
+        {students.map((item) => (
+          <div class="student" key={item.id}>
+            {item.sex === "男" ? "🤷‍♂️" : "🤷‍♀️"}
+            {item.id} {item.name} {item.class}
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
+```
+
+</TabItem>
+</Tabs>
+
+</Fieldset>
+
+:::tip 提示
+这些框架最明显的好处是解放双手，再也不用操作 Dom 了，靠数据驱动视图，将重点放在代码和业务本身上。
+:::
+
+## 教程
+
+<MockBook
+  videos={[
+    {
+      title: "深入理解 Vue",
+      desc: "被删",
+      src: "https://godbasin.github.io/vue-ebook",
+    },
+    {
+      title: "vue 教程",
+      desc: "jc2182",
+      src: "https://www.jc2182.com/vuejs/vuejs-jiaocheng.html",
+    },
+    {
+      title: "vue 官方文档",
+      desc: "vue官方",
+      src: "https://v3.cn.vuejs.org",
+    },
+    {
+      title: "react 教程",
+      desc: "jc2182",
+      src: "https://www.jc2182.com/react/react-jiaocheng.html",
+    },
+    {
+      title: "react 官方文档",
+      desc: "react官方",
+      src: "https://react.docschina.org",
+    }]}/>

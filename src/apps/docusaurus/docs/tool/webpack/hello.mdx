@@ -1,0 +1,97 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: 初步使用
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+
+## 安装
+同babel一样 将命令行工具、编译核心模块分化为两个包，`webpack`是核心库，`webpack-cli`是终端（命令行）使用的工具。
+```shell
+yarn add --dev webpack webpack-cli
+```
+
+
+## 简单使用
+创建一个项目，如下
+```
+  demo
+  |- index.html
+  |- /src
+    |- index.js
+    |- utils.js
+```
+
+<Tabs>
+<TabItem value="index.html" label="index.html">
+
+```html
+<button>计算1+2</button>
+<script src="./dist/main.js"></script>
+```
+
+</TabItem>
+<TabItem value="index.js" label="index.js">
+
+```js
+import {add} from "./utils.js";
+
+const btn = document.querySelector("button");
+btn.onclick = async () => {
+  const res = add(1, 2);
+  console.log(res);
+};
+```
+
+</TabItem>
+<TabItem value="utils.js" label="utils.js">
+
+```js
+export const add = (x, y) => {
+  return x + y;
+};
+```
+
+</TabItem>
+</Tabs>
+
+最后执行命令如下
+```shell
+npx webpack ./src/index.js --mode=development
+```
+就会在根目录下生成./dist/main.js。 这个文件 就是webpack做的处理了模块后的代码，引入html即可！
+
+如果你检查 dist/bundle.js，你可以看到 webpack 具体如何实现，这是独创精巧的设计！除了esm，webpack 还能够很好地支持多种其他模块语法。
+:::warning
+注意，webpack 不会更改代码中除 import 和 export 语句以外的部分。如果你在使用其它 ES2015 特性，请确保你在 webpack 的 loader 系统中使用了一个像是 Babel 或 Bublé 的转译器。
+:::
+
+## 配置文件
+webpack虽然可以无须任何配置使用，然而大多数项目会需要很复杂的设置，这就是为什么 webpack 仍然要支持 配置文件。这比在终端中手动输入大量命令要高效的多！
+
+根目录下创建一个webpack配置文件
+```js title="webpack.config.js"
+const path = require('path');
+
+module.exports = {
+  mode: "development",
+  entry: './src/index.js',
+  output: {
+    filename: 'main.js',
+    path: path.resolve(__dirname, 'dist')
+  }
+};
+```
+然后我们在上边的执行命令改为如下即可，
+```shell
+npx webpack
+```
+以上代码等价于 `npx webpack --config webpack.config.js`，因为默认不指定配置文件则会自动查找根目录下的`webpack.config.js`。
+
+比起 CLI 这种简单直接的使用方式，配置文件具有更多的灵活性。我们可以通过配置方式指定 loader 规则(loader rules)、插件(plugins)、解析选项(resolve options)，以及许多其他增强功能。
+
+## 小结
+1. webpack分为核心包和终端工具包，这两个包是webpack的基石。

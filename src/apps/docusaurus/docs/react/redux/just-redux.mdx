@@ -1,0 +1,140 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: redux
+---
+
+import CodeBlock from "@theme/CodeBlock";
+import store from "!!raw-loader!/src/components/DocsRedux/LuoyongApp/store/index.js";
+import App from "!!raw-loader!/src/components/DocsRedux/LuoyongApp/App.js";
+import Tips from "!!raw-loader!/src/components/DocsRedux/LuoyongApp/compnents/Tips.js";
+import actionCreator from "!!raw-loader!/src/components/DocsRedux/LuoyongApp/store/action-creator.js";
+import TipsUseAcr from "!!raw-loader!/src/components/DocsRedux/LuoyongApp/compnents/TipsUseAcr.js";
+
+
+👉[redux 官方文档](http://cn.redux.js.org/introduction/getting-started) 👈
+
+裸用的意思是，只用一个redux库，其他什么辅助包都不安装使用。
+
+## 定义 store
+
+<CodeBlock language="js" title="src/store/index.js">
+  {store}
+</CodeBlock>
+
+## 使用状态
+
+<CodeBlock language="jsx" title="src/App.jsx">
+  {App}
+</CodeBlock>
+
+## 更新状态
+
+<CodeBlock language="jsx" title="src/components/Tips.jsx">
+  {Tips}
+</CodeBlock>
+
+## 优化代码
+
+
+以上的写法和用法都没什么问题，是最基本的标准的用法，但在实际应用上，我们会发现有很多优化的地方。
+
+**👩‍🔧 优化 action**  
+在大型项目中，直接把 action 写在组件中，会很散乱，不好统一管理，而且也无法达到复用性，所以如果 action 多了的话，我们可以定一个辅助用函数来生成，这个函数俗称 action creator，即 action 生成器。
+
+我们提取出一个 action 生成器：
+
+<CodeBlock language="js" title="src/store/action-creator.js">
+  {actionCreator}
+</CodeBlock>
+
+然后在组件中使用
+
+<CodeBlock language="jsx" title="src/components/Tips.jsx">
+  {TipsUseAcr}
+</CodeBlock>
+
+甚至我们可以更近一步封装, 将 action creator 的创建也提取出来
+
+```javascript title="src/store/redux-helper.js"
+/**
+ * 生成actionCreator
+ * @param action的type字段
+ * @return actionCreator
+ */
+export const creatActionCreator = (type) => {
+  const actionCreator = (payload) => {
+    return { type, payload };
+  };
+  return actionCreator;
+};
+```
+
+然后我们再来创建一个 action creater， 看看是不是变得更简洁了
+
+```javascript title="src/store/action-creator.js"
+import { creatActionCreator } from "./redux-helper";
+
+// creatActionCreator 来创建type为SET_MSG 的actionCreator
+export const setMsg = creatActionCreator("SET_MSG");
+```
+
+**👩‍🔧 优化 reducer**  
+Reducer 是一个函数，它接受当前的 state 和 action，（通过内部的逻辑处理，它来决定如何更新数据即）返回新的 state。  
+同样的，原生写法也过于样板化，代码很多是重复的，所以我们也可以对其优化。
+
+我们提取出一个 reducer 生成器：
+
+```javascript title="src/store/redux-helper.js"
+/**
+ * 生成一个reducer
+ * @param handlers修改状态的逻辑函数，initialState为状态初始值
+ * @return 返回一个reducer函数
+ */
+export const creatReducer = (handlers, initialState) => {
+  const reducer = (state = initialState, action) => {
+    let finallyState = initialState;
+    for (const key in handlers) {
+      if (action.type === key) {
+        finallyState = handlers[key](state, action);
+      }
+    }
+    return finallyState;
+  };
+  return reducer;
+};
+```
+
+然后看看使用，是不是变得简洁起来了
+
+```js title="src/store/index.js"
+import { createStore } from "redux";
+import { creatReducer } from "./redux-helper";
+import { setMsg } from "./action-creator";
+
+// state
+const initialState = {
+  msg: "张三",
+};
+
+// reducer
+const reducer = creatReducer(
+  {
+    [setMsg().type](state, action) {
+      return { ...state, ...{ msg: action.payload } };
+    },
+  },
+  initialState
+);
+
+// store
+export default createStore(reducer);
+```
+
+**总结**  
+如上说的优化，其实就是提供了两个生成器，一个是`creatActionCreator`,一个是`creatReducer`。
+
+其实这些已经有人帮我们写了，并且还打包上传到 npm 上，我们只需要下载既可以是即可，叫做[redux-actions](https://github.com/redux-utilities/redux-actions)。
+在以前大家都用这个包，来简化 redux 的使用。不幸的是，作者貌似已经不怎么维护这个库了，而且它还不是官方出的。
+
+幸运的是，faceBook 官方已经注意到了这个情况，于是自己在很早之前着手并且现在已经发行了官方的 redux 辅助工具包，叫做[redux-toolkit](https://redux-toolkit.js.org)，里边提供了很多使用的东西，其中就就包括以上两个生成器。

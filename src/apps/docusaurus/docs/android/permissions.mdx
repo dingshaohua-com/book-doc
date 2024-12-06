@@ -1,0 +1,141 @@
+---
+hide_title: true
+sidebar_position: 9
+sidebar_label: 动态授权
+---
+
+随着安卓的不断升级，手机的权限也逐渐被google收回，在6.0时出现了动态权限的概念。
+
+安卓6.0之前应用的权限在安装时就可以全部授予（清单文件声明的），然而这可能造成店大欺客的情况，用户为了安装app，必须同意所有的权限。    
+在 Android 6.0 或更高版本对权限进行了分类，对某些涉及到用户隐私的权限可在运行时根据用户的需要动态授予。这样就不需要在安装时被强迫同意某些权限。
+
+
+AndroidManifest.xml 通过`uses-permission`添加需要的权限清单
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <uses-permission android:name="android.permission.INTERNET" /><!-- 增加这一行: 允许app访问网络-->
+
+    <!--    您需要同时拥有 位置 权限才能开始发现蓝牙设备 -->
+    <!--    获取精确位置信息（动态权限）-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <!--    获取模糊位置信息（动态权限）-->
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
+    <!--    蓝牙权限start-->
+    <!--    蓝牙基本信息（静态权限）-->
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <!--    蓝牙管理（静态权限）-->
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <!--    蓝牙发现权限-->
+    <uses-permission android:name="android.permission.BLUETOOTH_SCAN" />
+    <!--    蓝牙连接权限（动态权限）-->
+    <uses-permission android:name="android.permission.BLUETOOTH_CONNECT" />
+    <!--    蓝牙权限end-->
+
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
+
+    <application
+        android:usesCleartextTraffic="true"
+        android:allowBackup="true"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="@xml/backup_rules"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.BlUploader"
+        tools:targetApi="31">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+    </application>
+</manifest>
+```
+
+在MainActivity的onCreate里 requestPermissions   
+并处理用户选择拒绝或允许的回调 onRequestPermissionsResult
+```java title='MainActivity.java'
+public class MainActivity extends AppCompatActivity {
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        PermissionsHelper.requestPermissions(this);
+    }
+
+    /**
+     * 动态权限回调事件
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        Log.i("dsh", "onRequestPermissionsResult: ");
+        PermissionsHelper.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
+
+}
+```
+
+```java title='PermissionsHelper.java'
+import android.Manifest;
+import android.app.Activity;
+import android.content.pm.PackageManager;
+
+import androidx.core.app.ActivityCompat;
+
+import java.util.HashMap;
+import java.util.Map;
+
+
+public class PermissionsHelper {
+    private static final String TAG = "dsh";
+    private final static int PermissionsCode_All = 0;
+    static Map<String, String> map = new HashMap<String, String>() {{
+        put("android.permission.ACCESS_FINE_LOCATION", "位置");
+        put("android.permission.BLUETOOTH_SCAN", "蓝牙");
+    }};
+
+    public static String getPermissionZh(String key) {
+        return map.get(key);
+    }
+
+
+    public static void requestPermissions(Activity active){
+        // 动态获取权限
+        String[] permissions = {Manifest.permission.POST_NOTIFICATIONS, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.BLUETOOTH_SCAN, Manifest.permission.BLUETOOTH_CONNECT};
+        ActivityCompat.requestPermissions(active, permissions, PermissionsCode_All);
+    }
+
+    /**
+     * 动态权限回调事件
+     *
+     * @param requestCode  权限申请组id 自定义的
+     * @param permissions  申请权限组内容 是个数组
+     * @param grantResults 存储着权限授权结果 也是个数组
+     * @deprecated grantResults和permissions一一对应， 被拒绝则为-1，被同意则为0
+     */
+    public static void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        switch (requestCode) {
+            case PermissionsCode_All:
+                String str = "";
+                for (int i = 0; i < permissions.length; i++) {
+                    String permissionName = getPermissionZh(permissions[i]); // 权限名
+                    int permissionResult = grantResults[i]; // 权限结果
+                    String permissionStatus = permissionResult == PackageManager.PERMISSION_GRANTED ? "开启  " : "关闭  ";
+                    str += permissionName + ": " + permissionStatus;
+                }
+                break;
+        }
+    }
+}
+
+```

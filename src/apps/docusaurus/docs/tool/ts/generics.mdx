@@ -1,0 +1,174 @@
+---
+hide_title: true
+sidebar_position: 7
+sidebar_label: 泛型
+---
+
+
+
+
+使用泛型来创建可重用的组件，一个组件可以支持多种类型的数据。  
+
+泛型比较广泛的说法是“参数化类型”。就是将类型作为参数传入到方法。泛型通常以`<>`来包裹。
+
+
+## 泛型函数
+比如，我有个函数 接受一个任意参数，并将其直接返回出去
+```ts
+function test(arg: any): any{
+   return arg;
+}
+
+const res = test(123)
+console.log(res);
+```
+
+在这个例子中，参数arg是any类型 参数类型信息将丢失。而返回类型也是any 返回值类型亦丢失。
+
+接下来，我们开始引入一个叫做泛型的东西，我们给test添加了类型的变量T`用<T>表示`。       
+T帮助我们捕获用户传入的类型（比如：number），之后我们就可以使用这个类型。    
+之后我们再次使用了 T当做返回值类型。现在我们可以知道参数类型与返回值类型是相同的了。       
+这允许我们跟踪函数里使用的类型的信息。
+
+```ts
+function test<T>(arg: T): T{
+   return arg;
+}
+
+const res = test<number>(123)
+console.log(res);
+```
+
+实际上我们也可以利用ts本身的类型推断 不用传入所有参数使用
+```ts
+// 编译器会根据传入的参数自动地帮助我们确定T的类型
+const res = test(123)
+console.log(res);
+```
+
+
+## 泛型类
+类也可以使用泛型，泛型类 也是使用`<>`括起泛型类型，跟在类名后面。
+```ts
+// 创建一个人
+class People {
+    name: string;
+    age: number;
+    constructor(name: string, age: number) {
+        this.name = name;
+        this.age = age;
+    }
+}
+const people = new People('小红', 18);
+
+// 测试
+class JsonResult<T> {
+    code: number;
+    msg: string;
+    data: T;
+    constructor(code: number, msg: string, data: T){
+        this.code = code;
+        this.msg = msg;
+        this.data = data;
+    }
+}
+
+const res = new JsonResult<People>(0, '成功', people);
+```
+
+除了上边，根据业务需求封装的基于泛型可复用的组件外，泛型还可以起到约束，再来单独简单的demo
+```ts
+// 测试
+class Test<T> {
+    data: T;
+}
+
+const test = new Test<string>();
+test.data = 123; // 错误：不能将类型“number”分配给类型“string”
+```
+
+有一点需要注意：类的静态成员不能使用这个类上的泛型类型。
+
+## 其他
+### 泛型类型（泛型接口）
+在学习泛型函数的时候，我们知道，如下方式即可定一个
+```ts
+function fn<T>(arg: T): T {
+    return arg;
+}
+fn<string>('你好');
+```
+
+如上，我们的函数需要的类型（如参数类型、返回值类型）都是直接写在上边的。   
+我们怎么提取出来呢，即如何定义函数本身的类型呢？      
+其实它（带泛型的函数）与函普通函数的类型定义也没什么不同，只是有一个类型参数在最前面
+```ts
+let myFn: <T>(arg: T) => T =  (arg)=> {
+    return arg;
+};
+```
+
+我们还可以使用带有调用签名的对象字面量来定义泛型函数：
+```ts
+let myFn: {<T>(arg: T) => T} = (arg)=> {
+    return arg;
+};
+```
+
+这引导我们去写第一个`泛型接口`了。 我们把上面例子里的对象字面量拿出来做为一个接口：
+```ts
+interface FnType {
+    <T>(arg: T): T;
+}
+let myFn: FnType = (arg)=> {
+    return arg;
+};
+```
+
+
+我们可能想把泛型参数当作整个接口的一个参数,    
+这样我们就能清楚的知道使用的具体是哪个泛型类型。   
+这样接口里的其它成员也能知道这个参数的类型了。
+```ts
+interface FnType<T> {
+    (arg: T): T;
+}
+
+
+let myFn: FnType<number> = (arg)=> {
+    return arg;
+};
+myFn('abc'); // 错误：类型“string”的参数不能赋给类型“number”的参数
+```
+如上。 不再描述泛型函数，而是把非泛型函数签名作为泛型类型一部分。     
+当我们使用 myFn的时候，还得传入一个类型参数来指定泛型类型（这里是：number），锁定了之后代码里使用的类型。    
+对于描述哪部分类型属于泛型部分来说，理解何时把参数放在`调用签名里`和何时放在`接口上`是很有帮助的。
+
+
+### 泛型约束
+有时候想操作某类型的一组值，并且我们知道这组值具有什么样的属性。 
+如下 想访问arg的length属性，但是编译器并不能证明每种类型都有length属性，所以就报错了。
+```ts
+function test<T>(arg: T): T {
+    console.log(arg.length);  // Error: T doesn't have .length
+    return arg;
+}
+```
+
+为此，我们定义一个接口来描述约束条件。 创建一个包含 .length属性的接口，使用这个接口和extends关键字来实现约束
+```ts
+interface Lengthwise {
+    length: number;
+}
+
+function test<T extends Lengthwise>(arg: T): T {
+    console.log(arg.length);  // 现在我们知道它有 一个 .length 的属性, 所以不会报错
+    return arg;
+}
+```
+
+现在这个泛型函数被定义了约束，因此它不再是适用于任意类型：
+```ts
+test(3);  // 错误：类型“number”的参数不能赋给类型“Lengthwise”的参数
+test({length: 10, value: 3});
+```

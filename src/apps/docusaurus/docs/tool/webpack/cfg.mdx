@@ -1,0 +1,17 @@
+---
+hide_title: true
+sidebar_position: 3
+sidebar_label: 配置项
+---
+
+### target
+构建目标
+
+由于 JavaScript 既可以编写服务端代码也可以编写浏览器代码，所以 webpack 提供了多种部署 target，你可以在 webpack 的配置选项中进行设置。
+比如我要编译适用于浏览器的es5格式
+```js title="webpack.config.js"
+module.exports = {
+  ...
+  target: ['web', 'es5']
+};
+```

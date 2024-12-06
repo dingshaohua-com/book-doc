@@ -1,0 +1,99 @@
+---
+hide_title: true
+sidebar_position: 1
+---
+
+import Tabs from "@theme/Tabs";
+import TabItem from "@theme/TabItem";
+
+以前我们引入 JS 资源总是通过`<script>`标签引用。
+
+<Tabs>
+<TabItem value="index.html" label="index.html">
+
+```html
+<button>计算1+2</button>
+<script src="./src/utils.js"></script>
+<script src="./src/index.js"></script>
+```
+
+</TabItem>
+<TabItem value="index.js" label="index.js">
+
+```js
+const btn = document.querySelector("button");
+btn.onclick = async () => {
+  const res = add(1, 2);
+  console.log(res);
+};
+```
+
+</TabItem>
+<TabItem value="utils.js" label="utils.js">
+
+```js
+const add = (x, y) => {
+  return x + y;
+};
+```
+
+</TabItem>
+</Tabs>
+
+但是这种落后方式引入会有诸多弊端，如：
+
+1. 全局污染
+2. 先后执行顺序  
+   ...
+
+所以在新版的 JS 中提出了模块化方案，而 chrome 也开始了支持。
+
+<Tabs>
+<TabItem value="index.html" label="index.html">
+
+```html
+<button>计算1+2</button>
+<script type="module" src="./src/index.js"></script>
+```
+
+</TabItem>
+<TabItem value="index.js" label="index.js">
+
+```js
+import { add } from "./utils.js";
+
+const btn = document.querySelector("button");
+btn.onclick = async () => {
+  const res = add(1, 2);
+  console.log(res);
+};
+```
+
+</TabItem>
+<TabItem value="utils.js" label="utils.js">
+
+```js
+export const add = (x, y) => {
+  return x + y;
+};
+```
+
+</TabItem>
+</Tabs>
+
+不过在早些时候浏览器确是基本都不支持模块，也就是说上边代码会报错"import、export 无法被正确识别解析"。
+
+于是 webpack 就出现了，为了就是能让我们尽早使用上优秀的模块化技术，不用考虑兼容问题。经过 webpack 处理后的代码，引入到浏览器，就可以兼容旧浏览器。
+
+```mermaid
+graph LR;
+    utils.js-.->|import 引入|index.js;
+    index.js-->|Webpack处理|生成Output.js;
+    生成Output.js-->|script标签引入|index.html;
+```
+
+本章参考
+
+[前端工程化学习笔记.酱路油过](https://www.kancloud.cn/cyyspring/webpack/2670925)  
+[最新的 babel 兼容性实现方案.悬笔 e 绝](https://baijiahao.baidu.com/s?id=1709714903451987794)  
+[babel 之 core-js.chao wu](https://zhuanlan.zhihu.com/p/403826116)

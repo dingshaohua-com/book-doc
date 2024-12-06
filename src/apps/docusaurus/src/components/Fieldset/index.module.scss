@@ -1,0 +1,31 @@
+.Fieldset {
+    margin: 30px 0;
+    border-radius: 10px;
+    position: relative;
+    border: #2e8555 solid 2px;
+    padding: 20px;
+    .title{
+        padding: 10px 18px;
+        color: #2e8555;
+        position: absolute;
+        top: -26px;
+        left: 10px;
+        background-color: white;
+        font-size: 20px;
+        font-weight: 800;
+    }
+    .content{
+        padding: 10px;
+        
+    }
+    .exampleImg{
+        position: absolute;
+        right: 0;
+        bottom: 10px;
+        width: 80px;
+        opacity: 0.6;
+    }
+    p{
+        margin: 0;
+    }
+}
