@@ -1,20 +1,20 @@
 import DefaultTheme from "vitepress/theme";
 import Home from "./home.vue";
-import { watch } from 'vue'
+// import { watch } from 'vue'
 
 export default {
   extends: DefaultTheme,
   enhanceApp({ app, router, siteData }) {
-console.log(router.route);
+// console.log(router.route);
 
 
-watch(
-  () => router.route.path,
-  () => {
-    console.log("监听路由变化");
+// watch(
+//   () => router.route.path,
+//   () => {
+//     console.log("监听路由变化");
    
-  }
-);
+//   }
+// );
 
     // router.on('routeChange', (to, from) => {
     //   console.log('路由变化:', from.path, '->', to.path)
