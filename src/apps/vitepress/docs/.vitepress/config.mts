@@ -4,7 +4,7 @@ import { withSidebar } from 'vitepress-sidebar';
 const vitePressOptions = defineConfig({
   title: "丁知识库",
   description: "A VitePress Site",
-  base: "./vp",
+  base: "/vitepress",
   themeConfig: {
     nav: [
       { text: 'Vue', link: '/vue/intro' },
