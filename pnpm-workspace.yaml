@@ -1,3 +1,3 @@
 packages:
-  - 'src/apps/**'
+  - 'src/apps/*'
 link-workspace-packages: true

@@ -1,0 +1,26 @@
+{
+  "name": "book-doc-vitepress",
+  "version": "1.0.0",
+  "directories": {
+    "doc": "docs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "scripts": {
+    "dev": "npm run docs:dev",
+    "build": "npm run docs:build",
+    "docs:dev": "vitepress dev docs",
+    "docs:build": "vitepress build docs",
+    "docs:preview": "vitepress preview docs"
+  },
+  "description": "",
+  "devDependencies": {
+    "sass": "^1.82.0",
+    "vitepress": "^1.5.0",
+    "vitepress-sidebar": "1.29.1"
+  },
+  "dependencies": {
+    "vue-use-spring": "^0.3.3"
+  }
+}
