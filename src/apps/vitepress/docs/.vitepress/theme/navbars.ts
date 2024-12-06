@@ -8,8 +8,8 @@ const dynamicNavbarCfg = {
     content: "html、css、js的爱恨情仇",
     icon: holyTrinityImg,
     nav: [
-      { text: "Vue", link: "/vue/intro" },
-      { text: "Vuex", link: "/vuex/intro" },
+      { text: "Vue", link: "/vitepress/vue/intro" },
+      { text: "Vuex", link: "/vitepress/vuex/intro" },
     ],
   },
   feFwAndLib: {
