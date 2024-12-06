@@ -1,12 +1,21 @@
 import fs from "node:fs";
 import path from "node:path";
 import { spawn } from "node:child_process";
+import { checkbox } from '@inquirer/prompts';
 
-// 启动子项目
+// 获取都有哪些项目
+const ignoreDir = [".DS_Store"];
 const appsDir = path.resolve("src", "apps");
-const apps = fs.readdirSync(appsDir, { withFileTypes: true });
-apps.forEach((app) => {
-  const ignoreDir = [".DS_Store"];
+const apps = fs.readdirSync(appsDir, { withFileTypes: true }).filter(it=>!ignoreDir.includes(it.name));
+
+// 根据用户选择，启动指定项目
+const answer = await checkbox({
+  message: '选择需要启动的项目（空格选）？',
+  choices: apps.map(item=>({name: item.name, value: item.name}))
+});
+
+answer.forEach((appName) => {
+  const app = apps.find(it=>it.name===appName) 
   if (ignoreDir.includes(app.name)) return false;
   const appPath = path.resolve(app.parentPath, app.name);
   spawn("npm run", ["--prefix", appPath, "dev"], {
@@ -14,10 +23,3 @@ apps.forEach((app) => {
     shell: true,
   });
 });
-
-// // 启动主项目
-// const mainAppPath = path.resolve("src", "apps", "main-app");
-// spawn("npm run", ["--prefix", mainAppPath, "dev"], {
-//   stdio: "inherit",
-//   shell: true,
-// });
