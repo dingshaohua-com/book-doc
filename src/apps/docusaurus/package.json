@@ -6,7 +6,7 @@
     "docusaurus": "docusaurus",
     "dev":"npm run start",
     "start": "docusaurus start --host 0.0.0.0",
-    "build": "docusaurus build",
+    "build": "docusaurus build --out-dir dist",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",

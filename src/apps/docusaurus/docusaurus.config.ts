@@ -37,6 +37,7 @@ const config: Config = {
   favicon: "img/favicon.ico",
   url: "https://your-docusaurus-site.example.com",
   baseUrl: "/",
+  
 
   organizationName: "facebook", // Usually your GitHub org/user name.
   projectName: "docusaurus", // Usually your repo name.
