@@ -775,3 +775,16 @@ if (!allowNodeVersion) {
   process.exit(1);
 }
 ```
+
+
+## ts不识别vue文件
+增加如下代码即可
+```js
+// vite-env.d.ts
+declare module '*.vue' {
+  import type { DefineComponent } from 'vue';
+  const component: DefineComponent<_, _, any>;
+  export default component;
+}
+
+```
