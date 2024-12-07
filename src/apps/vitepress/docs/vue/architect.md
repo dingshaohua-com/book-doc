@@ -786,5 +786,17 @@ declare module '*.vue' {
   const component: DefineComponent<_, _, any>;
   export default component;
 }
-
 ```
+
+## 表单插件
+一般中后台都会大量用到表单，如果自己纯手撸，效率很低。
+这里推荐将 vue 开源表单生成插件（目前start最多，且较为完善） FormCreate
+
+![](https://img.dingshaohua.com/book-fe/202412071954123.webp)
+
+
+## 表格插件
+中后台，表格多用于展示数据，   
+比如用户列表、角色权限列表等等，也是必不可少，
+
+这里推荐 [vxetable](https://vxetable.cn)，推荐原因：star多、简单易用！
