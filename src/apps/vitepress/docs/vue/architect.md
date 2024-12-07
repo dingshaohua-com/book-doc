@@ -393,11 +393,15 @@ export default defineConfig({
 ```
 
 **ts 支持**  
-不过 ts 可能会提示没有显示导入的错误，我们可以在 ts 的配置文件中导入相关的类型声明文件 `auto-imports.d.ts` （此文件在配置好插件后会启动项目 会自动生成）即可，确保正确配置完成后 重启下 VScode。  
+但是如果您的项目是 ts，那么还需要配置一下，否则 ts 可能会提示没有显示导入的错误。   
+
+我们可以在 ts 的配置文件中导入相关的类型声明文件 `auto-imports.d.ts` （此文件在配置好插件后会启动项目 会自动生成）。
+
+确保正确配置完成后 重启下 VScode。  
 ![](https://img.dingshaohua.com/book-fe/202408091547108.png)
 
 ```js
-// tsconfig.json
+// tsconfig.app.json
 "include": [
   ...
   "auto-import.d.ts"
@@ -405,12 +409,12 @@ export default defineConfig({
 ```
 
 **eslisnt 支持**  
-如果你还用了 eslint，它也会提示了没有显示导入的错误。  
+如果你还用了 eslint，也需要载额外为期配置一下，否则它也会提示了没有显示导入的错误。  
 ![](https://img.dingshaohua.com/book-fe/202408101359889.png)
 
-在 vite 使用 auto import 插件的时候，开启 eslint 的支持 `AutoImport({eslintrc: { enabled: true }}, ...)`，之后你再次运行项目，会发现项目中自动生成了 `.eslintrc-auto-import.json`，这就是 auto import 插件生成的关于对 eslint 的配置代码！
+在 vite 使用 auto import 插件的时候，开启 eslint 的支持 `AutoImport({eslintrc: { enabled: true }})`，之后你再次运行项目，会发现项目中自动生成了 `.eslintrc-auto-import.json`！
 
-我们需要将其引入到 eslint 配置文件中，因为我们使用的是新版 v9 的 eslint，所以我们需要这么引入
+我们需要将其引入到 eslint 配置文件中，因为我们使用的是新版 v9 的 eslint
 
 ```js
 // eslint.config.js
@@ -429,7 +433,7 @@ export default [
 
 这样你再执行 `npx eslint` 就可以顺利的通过检测啦！
 
-对了 `require.js` 和 `absolute-file-path.js` 是我提取出去的两个帮助性文件，这里我贴出来
+`require.js` 和 `absolute-file-path.js` 是我提取出去的两个帮助性文件，这里我贴出来
 
 ```js
 // require.js
