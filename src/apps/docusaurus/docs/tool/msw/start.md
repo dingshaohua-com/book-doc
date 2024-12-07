@@ -24,17 +24,17 @@ const worker = setupWorker(...handlers);
 await worker.start(); // Promise<{ pending }>
 ```
 
-
 具体到在项目中使用，我们可以封装一个方法
+
 ```js
 // api mock相关
 const enableMocking = async () => {
-  if (process.env.NODE_ENV !== 'development') return;
-  const { worker } = await import('@/mocks');
+  if (process.env.NODE_ENV !== "development") return;
+  const { worker } = await import("@/mocks");
   await worker.start({
     onUnhandledRequest(request, print) {
       // 决定如何对未处理的请求做出反应: 如果url不包含/api的内容 就返回，否则就警告
-      if (request.url.indexOf('/api') === -1) return;
+      if (request.url.indexOf("/api") === -1) return;
       print.warning();
     },
   });
@@ -58,6 +58,8 @@ export const handlers = [
   }),
 ];
 ```
+
+### 返回格式
 
 如上，返回的数据可能对前端不友好，我们需要规范 返回格式
 
@@ -88,4 +90,39 @@ const handlers = [
 ];
 ```
 
+### baseUrl
 
+[MSW 没有提供使用其 API 设置基本 URL 的方法，您应该自行设置基本 URL](https://github.com/mswjs/msw/discussions/1696)！
+
+先定义好 baseUrl
+
+```shell
+# .env.development
+VITE_APP_BASE_API = '/api'
+```
+
+当然，我们封装的 http 请求，也要使用
+
+```js
+// api.js
+axios.defaults.baseURL = import.meta.env.VITE_APP_BASE_API;
+```
+
+最后，给 msw 做适配
+
+```js
+const baseURL = import.meta.env.VITE_APP_BASE_API;
+
+http.post(baseURL + "/login", async ({ request }) => {
+  // 解构POST参数
+  const res: any = await request.json();
+  const { account, password } = res;
+  if (account === "admin" && password === "password") {
+    return JsonResult.sucess({
+      token: "abc2025",
+    });
+  } else {
+    return JsonResult.error("账号或密错误");
+  }
+});
+```
