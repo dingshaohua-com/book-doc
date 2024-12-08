@@ -37,6 +37,20 @@ const vitePressOptions = defineConfig({
 const vitePressSidebarOptions = [
   {
     documentRootPath: 'docs',
+    scanStartPath: 'html',
+    basePath: '/html/',
+    resolvePath: '/html/',
+    useTitleFromFileHeading: true,
+  },
+  {
+    documentRootPath: 'docs',
+    scanStartPath: 'css',
+    basePath: '/css/',
+    resolvePath: '/css/',
+    useTitleFromFileHeading: true,
+  },
+  {
+    documentRootPath: 'docs',
     scanStartPath: 'vue',
     basePath: '/vue/',
     resolvePath: '/vue/',
