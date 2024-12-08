@@ -6,10 +6,10 @@ const vitePressOptions = defineConfig({
   description: "A VitePress Site",
   base: "/vitepress",
   themeConfig: {
-    nav: [
-      { text: 'Vue', link: '/vitepress/vue/intro' },
-      { text: 'Vuex', link: '/vitepress/vuex/intro' }
-    ],
+    // nav: [
+    //   { text: 'Vue1', link: '/vitepress/vue/intro' },
+    //   { text: 'Vuex2', link: '/vitepress/vuex/intro' }
+    // ],
 
     sidebar: [
       // {

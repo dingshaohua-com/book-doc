@@ -2,12 +2,12 @@
   <div class="home">
     <div class="other"></div>
     <div class="docss">
-      <template v-for="item in Object.keys(navbars)" :key="item">
+      <template v-for="key in Object.keys(navGroup)" :key="key">
         <div class="docs">
-          <img :src="navbars[item].icon" />
-          <div class="content">{{ navbars[item].content }}</div>
-          <div class="title" @click="goDynamicNavbar(item)">
-            {{ navbars[item].title }}
+          <img :src="navGroup[key].icon" />
+          <div class="content">{{ navGroup[key].content }}</div>
+          <div class="title" @click="goByNavGroup(navGroup[key])">
+            {{ navGroup[key].title }}
           </div>
         </div>
       </template>
@@ -16,18 +16,19 @@
 </template>
 
 <script setup name="customHome" lang="ts">
-import navbars from "./navbars";
+// @ts-nocheck
+import navGroup from "./nav-group";
 import { useRouter, useData } from "vitepress";
 
-const { theme } = useData()
+const data = useData()
 const router = useRouter();
 
-const goDynamicNavbar = (path) => {
-  const { link } = navbars[path].nav[0];
-  theme.value.nav = navbars[path].nav;
-  console.log(navbars[path].nav, theme.value);
-  router.go(link);
-  
+const goByNavGroup = (item) => {
+  const [{ link }] = item.nav;
+  let base = data.site.value.base
+  base = base.slice(0, -1);
+  router.go(base + link);
+
 };
 </script>
 
@@ -47,20 +48,24 @@ const goDynamicNavbar = (path) => {
     margin: auto;
     display: flex;
     flex-wrap: wrap;
+
     .docs {
       padding: 0 16px;
       // height: 180px;
       margin-bottom: 20px;
       cursor: pointer;
+
       img {
         width: 100%;
         border-radius: 4px;
         background-color: rgba($color: #000000, $alpha: 0.1);
       }
+
       .title {
         text-align: center;
         font-weight: 700;
       }
+
       .content {
         text-align: center;
         font-size: 13px;
@@ -71,6 +76,7 @@ const goDynamicNavbar = (path) => {
     @media screen and (max-width: 600px) {
       .docs {
         width: 50%;
+
         img {
           height: 90px;
         }
@@ -81,6 +87,7 @@ const goDynamicNavbar = (path) => {
     @media screen and (min-width: 600px) and (max-width: 800px) {
       .docs {
         width: 33%;
+
         img {
           height: 110px;
         }
@@ -91,6 +98,7 @@ const goDynamicNavbar = (path) => {
     @media screen and (min-width: 800px) {
       .docs {
         width: 25%;
+
         img {
           height: 130px;
         }

@@ -1,46 +1,39 @@
 import DefaultTheme from "vitepress/theme";
 import Home from "./home.vue";
-// import { watch } from 'vue'
+import { watch } from 'vue'
+import navGroup from "./nav-group";
+
+const getNavs = (currentRoute, siteBaseUrl) => {
+  siteBaseUrl = siteBaseUrl.slice(0, -1);
+  currentRoute = currentRoute.replace(/\.[^/.]+$/, "");
+  for (const key in navGroup) {
+    const match = navGroup[key].nav?.find(it => (siteBaseUrl + it.link) === currentRoute);
+    if (match) return navGroup[key].nav; // 返回找到的根键，例如 'holyTrinity'
+  }
+  return null;
+}
 
 export default {
   extends: DefaultTheme,
   enhanceApp({ app, router, siteData }) {
-// console.log(router.route);
-
-
-// watch(
-//   () => router.route.path,
-//   () => {
-//     console.log("监听路由变化");
-   
-//   }
-// );
-
-    // router.on('routeChange', (to, from) => {
-    //   console.log('路由变化:', from.path, '->', to.path)
-
-    // })
-    // 使用 Vue Router 监听路由变化
-    // router.beforeEach((to, from, next) => {
-    //   console.log('路由变化：', from.fullPath, '->', to.fullPath)
-
-
-    //   // 必须调用 next() 来继续导航
-    //   next()
-    // })
-
-    
-    // 动态修改站点数据（毕竟使用useData不生效），比如这里动态设置navbar
-    siteData.value = {
-      ...siteData.value,
-      themeConfig:{
-        ...siteData.value.themeConfig,
-        nav:[
-          { text: "Vue", link: "/vitepress/vue/intro" },
-          { text: "Vuex", link: "/vitepress/vuex/intro" },
-        ]
+    watch(
+      () => router.route.path,
+      (val) => {
+        const nav = getNavs(val, siteData.value.base);
+        console.log(nav);
+        
+        // 动态修改站点数据（毕竟使用useData不生效），比如这里动态设置navbar
+        if (nav) {
+          siteData.value = {
+            ...siteData.value,
+            themeConfig: {
+              ...siteData.value.themeConfig,
+              nav
+            }
+          }
+        }
       }
-    }
+    );
     app.component("customHome", Home);
   },
 };

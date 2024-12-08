@@ -2,14 +2,14 @@ import holyTrinityImg from "./assets/img/docss/holy-trinity.webp";
 import feFwLibImg from "./assets/img/docss/fe-fw-lib.png";
 import feErgImg from "./assets/img/docss/fe-erg.png";
 
-const dynamicNavbarCfg = {
+const navGroup= {
   holyTrinity: {
     title: "前端三剑客",
     content: "html、css、js的爱恨情仇",
     icon: holyTrinityImg,
     nav: [
-      { text: "Vue", link: "/vitepress/vue/intro" },
-      { text: "Vuex", link: "/vitepress/vuex/intro" },
+      { text: "Html", link: "/vue/intro" },
+      { text: "Css", link: "/vuex/intro" },
     ],
   },
   feFwAndLib: {
@@ -17,8 +17,8 @@ const dynamicNavbarCfg = {
     content: "让你事半功倍",
     icon: feFwLibImg,
     nav: [
-      { text: "Vue1", link: "/vue/intro" },
-      { text: "Vue1", link: "/vuex/intro" },
+      { text: "Vue", link: "/vue1/intro" },
+      { text: "Vuex", link: "/vuex/intro2" },
     ],
   },
   feErg: {
@@ -38,4 +38,4 @@ const dynamicNavbarCfg = {
   },
 };
 
-export default dynamicNavbarCfg;
+export default navGroup;
