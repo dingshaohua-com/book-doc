@@ -17,18 +17,19 @@
 
 <script setup name="customHome" lang="ts">
 // @ts-nocheck
-import navGroup from "./nav-group";
+import _ from 'lodash';
+import {ref} from "vue";
+import navGroupTemp from "./helper/nav-group";
 import { useRouter, useData } from "vitepress";
+import {getFirstSideBarLink} from "./helper/utils"
 
-const data = useData()
+const navGroup = ref(_.cloneDeep(navGroupTemp));
+const { site, theme } = useData()
 const router = useRouter();
-
 const goByNavGroup = (item) => {
-  const [{ link }] = item.nav;
-  let base = data.site.value.base
-  base = base.slice(0, -1);
-  router.go(base + link);
-
+  const [firstNav] = item.nav;
+  const link = getFirstSideBarLink(firstNav.link, theme.value.sidebar, site.value.base);
+  router.go(link);
 };
 </script>
 

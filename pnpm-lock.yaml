@@ -69,6 +69,9 @@ importers:
       '@vueuse/core':
         specifier: ^12.0.0
         version: 12.0.0(typescript@5.7.2)
+      lodash:
+        specifier: ^4.17.21
+        version: 4.17.21
       vue-use-spring:
         specifier: ^0.3.3
         version: 0.3.3(vue@3.5.13(typescript@5.7.2))
@@ -80,8 +83,8 @@ importers:
         specifier: ^1.5.0
         version: 1.5.0(@algolia/client-search@5.15.0)(@types/node@22.10.1)(nprogress@0.2.0)(postcss@8.4.49)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)(sass@1.82.0)(search-insights@2.17.3)(terser@5.37.0)(typescript@5.7.2)
       vitepress-sidebar:
-        specifier: 1.29.1
-        version: 1.29.1
+        specifier: ^1.30.2
+        version: 1.30.2
 
 packages:
 
@@ -5735,8 +5738,8 @@ packages:
       terser:
         optional: true
 
-  vitepress-sidebar@1.29.1:
-    resolution: {integrity: sha512-PynJ6ZPgc7q0D8Pqllk1tx0tbk+EmFUHf+ENUh+AjEqEtyqy/M14uRwzhuv8YXJJBW+L7iXmvtEUD/9LNnHdgg==}
+  vitepress-sidebar@1.30.2:
+    resolution: {integrity: sha512-5NWULe+lMGcair5z23Oapp4+sOSVwpUEj7s2JwZzb9T4pUbY6EumbSPZlY7q+h3vApnaYn4psVAzsalSKBJ/Xg==}
     engines: {node: '>=18.0.0'}
 
   vitepress@1.5.0:
@@ -13076,7 +13079,7 @@ snapshots:
       sass: 1.82.0
       terser: 5.37.0
 
-  vitepress-sidebar@1.29.1:
+  vitepress-sidebar@1.30.2:
     dependencies:
       glob: 10.4.5
       gray-matter: 4.0.3
