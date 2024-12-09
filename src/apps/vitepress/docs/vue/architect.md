@@ -808,7 +808,7 @@ MSW 全称 Mock Service Worker  是一个用于浏览器或 Node.js 的 API 模�
 MSW 的与众不同之处在于，它极力主张使用独立的 API 模拟层，为您的网络行为创建单一事实来源，并将其集成到您使用的任何工具中。
 这带来了更具弹性的设置，并与其他库功能相结合，创造了真正无缝的 API 模拟体验。
 
-[MSW](https://mswjs.io)是目前相当优秀的方案，但是这需要一定的难度，这里有简单和快熟开始的的[使用文档](/tool/msw/start)
+[MSW](https://mswjs.io)是目前相当优秀的方案，但是这需要一定的难度，这里有简单和快熟开始的的[使用文档](https://doc.dingshaohua.com/tool/msw/start)
 
 
 
