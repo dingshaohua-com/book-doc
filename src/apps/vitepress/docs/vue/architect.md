@@ -393,7 +393,7 @@ export default defineConfig({
 ```
 
 **ts 支持**  
-但是如果您的项目是 ts，那么还需要配置一下，否则 ts 可能会提示没有显示导入的错误。   
+但是如果您的项目是 ts，那么还需要配置一下，否则 ts 可能会提示没有显示导入的错误。
 
 我们可以在 ts 的配置文件中导入相关的类型声明文件 `auto-imports.d.ts` （此文件在配置好插件后会启动项目 会自动生成）。
 
@@ -776,9 +776,10 @@ if (!allowNodeVersion) {
 }
 ```
 
+## ts 不识别 vue 文件
 
-## ts不识别vue文件
 增加如下代码即可
+
 ```js
 // vite-env.d.ts
 declare module '*.vue' {
@@ -789,26 +790,36 @@ declare module '*.vue' {
 ```
 
 ## 表单插件
+
 一般中后台都会大量用到表单，如果自己纯手撸，效率很低。
-这里推荐将 vue 开源表单生成插件（目前start最多，且较为完善） FormCreate
+这里推荐将 vue 开源表单生成插件（目前 start 最多，且较为完善） FormCreate
 
 ![](https://img.dingshaohua.com/book-fe/202412071954123.webp)
 
-
 ## 表格插件
-中后台，表格多用于展示数据，   
+
+中后台，表格多用于展示数据，  
 比如用户列表、角色权限列表等等，也是必不可少，
 
-这里推荐 [vxetable](https://vxetable.cn)，推荐原因：star多、简单易用！
+这里推荐 [vxetable](https://vxetable.cn)，推荐原因：star 多、简单易用！
 
+## mock 数据
 
-## mock数据
-MSW 全称 Mock Service Worker  是一个用于浏览器或 Node.js 的 API 模拟库。借助它，您可以拦截传出的请求、观察它们，并使用模拟响应来响应它们。
+MSW 全称 Mock Service Worker 是一个用于浏览器或 Node.js 的 API 模拟库。借助它，您可以拦截传出的请求、观察它们，并使用模拟响应来响应它们。
 
 MSW 的与众不同之处在于，它极力主张使用独立的 API 模拟层，为您的网络行为创建单一事实来源，并将其集成到您使用的任何工具中。
 这带来了更具弹性的设置，并与其他库功能相结合，创造了真正无缝的 API 模拟体验。
 
 [MSW](https://mswjs.io)是目前相当优秀的方案，但是这需要一定的难度，这里有简单和快熟开始的的[使用文档](https://doc.dingshaohua.com/tool/msw/start)
 
+## 包管理器
 
+推荐项目包管理工具位 pnpm，即便不是 您的选择也应该按照优先级为 pnpm > yarn > npm
 
+**npm、yarn、pnpm 比较**
+
+都是 js 包管理工具，用于管理和下载 js 依赖项。它们的主要区别在于以下几个方面：
+
+⚡️ 性能：yarn 和 pnpm 相对于 npm 来说更快。yarn 使用并行下载和缓存机制来提高性能，而 pnpm 则使用硬链接和符号链接来减少磁盘空间的使用。
+
+⬇️ 安装依赖项的方式：npm 和 yarn 都会将依赖项安装在本地 node_modules 中，而 pnpm 会将依赖项安装在全局缓存中，并使用符号链接将其连接到项目中。
