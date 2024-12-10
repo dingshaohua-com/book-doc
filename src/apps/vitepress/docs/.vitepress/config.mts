@@ -30,7 +30,7 @@ const docs = fs.readdirSync(docsPath, { withFileTypes: true }).filter(it => {
 const vitePressSidebarOptions = docs.map(it => ({
   documentRootPath: 'docs',
   scanStartPath: it.name,
-  // basePath: `/${it.name}/`,
+  basePath: `/${it.name}/`,
   resolvePath: `/${it.name}/`,
   useTitleFromFileHeading: true,
   collapsed: true,
