@@ -3,11 +3,11 @@
 默认情况和官方示例，菜单都是两级。
 ![](https://img.dingshaohua.com/book-fe/202412111847511.webp)
 
-那我们如何能做到仅一级菜单呢？
+那如何能做到仅一级菜单呢？
 
 
 ## 创建路由文件
-我们创建一个演示的路由文件，仅展示一级菜单。
+我们创建一个仅展示一级菜单 演示的路由文件。
 ```js
 // src/router/routes/modules/simple.ts
 import { DEFAULT_LAYOUT } from '../base';
@@ -54,7 +54,7 @@ export default SIMPLE;
 ```
 
 ## 重启预览
-既可以看到效果   
+效果如下   
 ![](https://img.dingshaohua.com/book-fe/202412111852196.webp)
 
 参考：   
