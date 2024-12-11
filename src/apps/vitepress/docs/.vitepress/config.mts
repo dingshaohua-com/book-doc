@@ -4,7 +4,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 const vitePressOptions = defineConfig({
-  title: "丁知识库",
+  title: "知识库",
   description: "A VitePress Site",
   base: "/vitepress",
   cleanUrls: true,
