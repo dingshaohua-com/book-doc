@@ -18,6 +18,7 @@ const navGroup = {
     nav: [
       { text: "Vue", link: "/vue" },
       { text: "Vuex", link: "/vuex" },
+      { text: "Arco", link: "/arco" }
     ],
   },
 };
