@@ -151,7 +151,7 @@ const NOSUBMENU: Array<AppRouteRecordRaw> = [
       order: 0,
       locale: '列表',
       requiresAuth: true,
-      icon: 'icon-customer-service',
+      icon: 'icon-book',
     },
   },
 ];
