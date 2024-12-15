@@ -11,6 +11,7 @@ const vitePressOptions = defineConfig({
   themeConfig: {
     nav: [],
     sidebar: [],
+    outline:[2,3],
     // socialLinks: [
     //   { icon: 'github', link: 'https://github.com/vuejs/vitepress' }
     // ]
