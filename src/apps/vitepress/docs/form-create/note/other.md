@@ -5,9 +5,7 @@ sidebar_position: 1
 # 其它
 
 ## label 独占一行
-[表单全局配置项-form]https://www.form-create.com/v3/guide/global-options#form)
-
-form 这个配置项，可以将原ui库的表单配置项的参数传入进去，以acro design的form为例，如下
+[表单全局配置项-form](https://www.form-create.com/v3/guide/global-options#form), 这个配置项可以将原ui库的表单配置项的参数传入进去，以acro design的form为例，代码和效果如下
 ![](https://img.dingshaohua.com/book-fe/202412171608201.png)
 ```js
 const fApi = ref({});
