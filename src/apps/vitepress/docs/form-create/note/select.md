@@ -56,7 +56,7 @@ const rule = [
         slot: "label",
         children: [
           {
-            cache: false,
+            cache: false, // 关闭缓存，不然vue状态变化后，组件不更新 https://github.com/xaboy/form-create/issues/482
             type: "selectLabelComponent",
           },
         ],
