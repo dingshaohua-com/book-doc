@@ -97,3 +97,6 @@ const rule = [
 }
 </style>
 ```
+
+你可能好奇，在定义 selectLabelComponent的slot组件的时候，为何不能使用官方提供的 `<template #label="{ data }">` 获取当前选中的data 呢？   
+![](https://img.dingshaohua.com/book-fe/202412171638785.png)
