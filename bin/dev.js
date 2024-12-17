@@ -10,7 +10,8 @@ const apps = fs.readdirSync(appsDir, { withFileTypes: true }).filter(it=>!ignore
 
 // 根据用户选择，启动指定项目
 const answer = await checkbox({
-  message: '选择需要启动的项目（空格选）？',
+  message: '选择需要启动的项目？',
+  instructions: "😍空格键多选，回车键确定启动💏",
   choices: apps.map(item=>({name: item.name, value: item.name}))
 });
 
