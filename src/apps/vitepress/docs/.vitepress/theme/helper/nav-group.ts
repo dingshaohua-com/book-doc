@@ -19,7 +19,8 @@ const navGroup = {
       { text: "Vue", link: "/vue" },
       { text: "Vuex", link: "/vuex" },
       { text: "Arco", link: "/arco" },
-      { text: "formCreate", link: "/form-create" }
+      { text: "formCreate", link: "/form-create" },
+      { text: "声网", link: "/shengwang" }
     ],
   },
 };

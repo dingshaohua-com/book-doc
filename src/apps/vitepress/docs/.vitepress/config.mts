@@ -37,7 +37,8 @@ const vitePressSidebarOptions = docs.map(it => ({
   collapsed: true,
   rootGroupCollapsed: true,
   useFolderLinkFromSameNameSubFile: true, // 如果此值为true,则当存在与文件夹同名的子文件时,将在文件夹中创建一个链接,用于导航至该文件,而该文件不会显示在子项中。
-  // folderLinkNotIncludesFileName: true
+  // folderLinkNotIncludesFileName: true,
+  sortMenusByFrontmatterOrder: true, //左侧导航根据元数据order排序
 }))
 
 export default defineConfig(withSidebar(vitePressOptions, vitePressSidebarOptions));
