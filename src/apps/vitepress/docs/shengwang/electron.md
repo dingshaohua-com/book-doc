@@ -62,7 +62,7 @@ const mainWindow = new BrowserWindow({
 :::
 
 :::tip 术语提示
-注意，renderder、web 侧指 electron 的渲染进程，区别于 electron 的主进程！
+注意，renderder、web 侧 都是指 electron 的渲染进程，区别于 electron 的主进程！
 :::
 
 因为 `agora-electron-sdk` 属于 `electron ` 进程的模块，且还用到了 webpack 的能力！
