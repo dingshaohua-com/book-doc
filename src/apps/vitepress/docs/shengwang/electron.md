@@ -39,7 +39,6 @@ order: 2
 npm install agora-electron-sdk
 ```
 
-
 ## 主进程配置
 
 声望要求 electron 项目：需要开启 node 集成，关闭上下文隔离（尽管 [electron 官方非常不提倡这么做](https://www.electronjs.org/zh/docs/latest/tutorial/security#%E6%B8%85%E5%8D%95%E5%AE%89%E5%85%A8%E5%BB%BA%E8%AE%AE)！想要用 ipc？声网 SDK 并未兼容会报错，自己研究去吧 😊）
@@ -102,10 +101,10 @@ Vite: Could not resolve "../build/Release/agora_node_ext"
 
 不仅仅是此插件，在 electron 集成 node 环境之后， 若在渲染进程中使用 electron 的模块或 Node 模块 最好都要这么处理！
 
+## 测试 Code
 
-## 测试Code
 :::tip 注意
-以下代码都是渲染进程项目中，既web项目中的内容
+以下代码都是渲染进程项目中，既 web 项目中的内容
 :::
 
 我们来定义一个辅助函数
@@ -197,48 +196,47 @@ export const getEventHandles = (rtc) => {
 };
 ```
 
-
-
 这是一个基于 vite 创建的 vue3 项目
+
 ```vue
 <!-- app.vue -->
-<script setup lang="ts">
-import { initRtc, joinChannel, getEventHandles } from '@/utils/rtc-helper';
+<script setup>
+import { initRtc, joinChannel, getEventHandles } from "@/utils/rtc-helper";
 
 const rtcInit = async () => {
   try {
     // 初始化 RTC 引擎
     const rtc = initRtc();
-    console.log('RTC初始化完成');
+    console.log("RTC初始化完成");
 
     const enableVideoResult = rtc.enableVideo();
     if (enableVideoResult < 0) {
       console.error(`enableVideo failed with error code: ${enableVideoResult}`);
       return;
     }
-    console.log('启用视频模块');
+    console.log("启用视频模块");
 
     const ret = rtc.startPreview();
     if (ret < 0) {
       console.error(`startPreview failed with error code: ${ret}`);
       return;
     }
-    console.log('开启本地视频预览');
+    console.log("开启本地视频预览");
 
     joinChannel(rtc);
-    console.log('加入频道');
+    console.log("加入频道");
 
     // 注册事件回调
     const eventHandles = getEventHandles(rtc);
     rtc.registerEventHandler(eventHandles);
   } catch (error) {
-    console.error('RTC初始化失败:', error);
+    console.error("RTC初始化失败:", error);
   }
 };
 </script>
 
 <template>
-  <div class="welcom">
+  <div class="app">
     <el-button @click="rtcInit()">开始注册</el-button>
     <div class="videos">
       <div class="video">
@@ -254,30 +252,30 @@ const rtcInit = async () => {
 </template>
 
 <style scoped lang="scss">
-.welcom {
+.app {
   padding: 10px;
-}
-.videos {
-  display: flex;
-  margin-left: -10px;
-  margin-top: 10px;
-
-  .video {
-    width: 300px;
-    height: 200px;
-    margin-left: 10px;
-    background-color: #adf59d;
-    position: relative;
-    .join-channel-local-video, .join-channel-remote-video{
-      width: 100%;
-      height: 100%;
-    }
-    .title {
-      position: absolute;
-      left: 0;
-      top: 0;
-      color: #fefefe;
-      font-size: 12px;
+  .videos {
+    display: flex;
+    margin-left: -10px;
+    margin-top: 10px;
+    .video {
+      width: 300px;
+      height: 200px;
+      margin-left: 10px;
+      background-color: #adf59d;
+      position: relative;
+      .join-channel-local-video,
+      .join-channel-remote-video {
+        width: 100%;
+        height: 100%;
+      }
+      .title {
+        position: absolute;
+        left: 0;
+        top: 0;
+        color: #fefefe;
+        font-size: 12px;
+      }
     }
   }
 }
