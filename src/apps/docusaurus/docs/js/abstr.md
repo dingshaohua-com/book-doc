@@ -150,7 +150,7 @@ class Nokia extends Phone implements PhoneInterface {
     
   }
 }
-const createSDKFactory = (_class: typeof BaseSDK) => new _class() //这里体现的就是多态
-const nokia = createSDKFactory(Nokia);
+const createPhoneFactory = (_class: typeof Phone) => new _class() //这里体现的就是多态
+const nokia = createPhoneFactory(Nokia);
 nokia.sayHi()
 ```
