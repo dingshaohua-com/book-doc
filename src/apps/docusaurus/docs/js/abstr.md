@@ -124,3 +124,33 @@ const phone = Phone.getInstance("nokia");
 * 这个 phone 对象拥有每一层父级的所有方法和属性，包括公共Phone类的统一基类方法！ 
 * phone 类，可以作为约束和统筹具体实现类（也就是父类）的作用。
 * 具体实现类还可以继续继承或者使用ts的接口去强制约束。
+
+
+
+---
+
+## 还可用另一种写法
+
+多态
+```ts
+interface PhoneInterface {
+  sayHi(...arg:any[]):void;
+}
+
+class Phone implements PhoneInterface {
+  static version = '1.0';
+  sayHi(){
+    console.log('phone say hi');
+  }
+}
+
+class Nokia extends Phone implements PhoneInterface {
+  sayHi(){
+    console.log('nokia say hi');
+    
+  }
+}
+const createSDKFactory = (_class: typeof BaseSDK) => new _class() //这里体现的就是多态
+const nokia = createSDKFactory(Nokia);
+nokia.sayHi()
+```
