@@ -59,7 +59,7 @@ Flutter是一款移动应用程序SDK，包含框架、widget和工具, 在Flutt
 
 [一个最简单的Flutter应用程序](https://blog.csdn.net/sinat_17775997/article/details/90144258)只需要一个widget即可
 ```dart
-import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 
 // 主方法（入口）
 void main() {
@@ -76,7 +76,7 @@ class MyAppWidget extends StatelessWidget {
    */
   @override
   Widget build(BuildContext context) {
-    // Text是flutter内置的一个小组件（在flutter/material.dart中定义），作用类似于html中的p元素，
+    // Text是flutter内置的基础组件（在flutter/widgets.dart中定义），作用类似于html中的p元素，
     // 前边的const说明这个text元素的内容不会更新 是死的，无状态的！
     return const Text( 
       '-----Hello World!-----',
@@ -87,22 +87,3 @@ class MyAppWidget extends StatelessWidget {
 ```
 ![](https://img.dingshaohua.com/book-fe/202412021344522.jpg)
 
-
-## flutter内置组件
-`package:flutter/material.dart` 包是 Flutter 提供的一组小部件，专门用于实现 **Material Design** 风格（Google 提出的设计语言，旨在创建具有一致性、直观和美观的用户界面）的 UI。它内置了不限于以下组件： 
-  - **`Scaffold`**：一个标准的页面布局结构，包含了应用程序的 `AppBar`、`Drawer`、`Body` 等。
-  - **`AppBar`**：一个顶部的应用栏，通常包含标题、菜单等。
-  - **`Text`**：用于显示文本的部件。
-  - **`FlatButton` / `ElevatedButton`**：按钮部件。
-  - **`Container`**：一个用于布局的容器，可以设置大小、边距、背景色等。
-  - **`Column` / `Row`**：用于纵向或横向排列其他小部件的布局部件。
-  - **`Icon`**：用于显示图标的小部件。
-  - **`ListView`**：用于显示列表的部件。
-  - **导航和路由**：`Navigator`、`MaterialPageRoute` 等，用于在不同页面间导航。
-  - **卡片、浮动按钮**：如 `Card`、`FloatingActionButton` 等，可以方便地创建具有 Material 风格的 UI 元素。
-  - **`ThemeData`**：定义应用的整体样式。
-  - **`Theme`**：提供当前的主题数据，可以通过 `Theme.of(context)` 获取当前的主题配置。
-  - ...
-
-
-总之，`package:flutter/material.dart` 是构建 Flutter 应用时最常用的包之一，提供了一个全面的组件或工具，帮助你快速开发出符合 Material Design 规范的现代应用。
