@@ -1,4 +1,6 @@
-# 面向对象
+# 抽离与复用
+
+虽然js不像传统的面向对象语言那样特性，但是我们依然可以做出封装与集成 来达到复用和管理的目的！
 
 ## 要求
 ```
@@ -39,7 +41,7 @@ for (const path in requireModules) {
 export default class Phone {
   static version = "1.0";
   static getInstance(type: string) {
-    // 这才是基类 （实现了动态继承）
+    // 这才是基基类 （实现了动态继承）
     class InnerClass extends modules[type] {
       constructor() {
         super();
@@ -68,7 +70,7 @@ export default class Nokia {
 }
 ```
 
-还有继承的例子
+还可以继续继承
 
 ```js
 // impl/nokia.js
@@ -88,7 +90,7 @@ export default class Nokia extends Device {
 ```
 
 
-还有Ts版本，可以约束子类必须实现某些方法
+还可以Ts约束
 
 ```ts
 // PhoneInterface.ts
