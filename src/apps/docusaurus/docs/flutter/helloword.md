@@ -2,7 +2,7 @@
 sidebar_position: 3
 ---
 
-# 你好世界
+# 入门
 
 
 ## 安装插件
@@ -58,6 +58,22 @@ android/ 和 ios/ 文件夹分别用于存放原生平台的相关代码和配�
 Flutter是一款移动应用程序SDK，包含框架、widget和工具, 在Flutter中,大多数东西都是widget,我们就从widget开始学起！
 
 [一个最简单的Flutter应用程序](https://blog.csdn.net/sinat_17775997/article/details/90144258)只需要一个widget即可
+
+
+### 例子1
+这个 widget 可以是 flutter 内置的，如下边的 `Text`
+```dart
+import 'package:flutter/widgets.dart';
+
+void main() {
+  runApp(const Text('-----Hello World!-----', textDirection: TextDirection.ltr));
+}
+
+```
+
+
+### 例子2
+当然也可以是你自定义的，如下边的 `MyAppWidget`（下一章节，我们会更详细的介绍如何自定义widget）
 ```dart
 import 'package:flutter/widgets.dart';
 
