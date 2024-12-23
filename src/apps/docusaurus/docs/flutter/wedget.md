@@ -179,3 +179,14 @@ class MyAppWidgetState extends State<MyAppWidget> {
 * 适合Ios的[CupertinoApp](https://docs.flutter.dev/ui/layout#cupertino-apps) ，并包含WidgetsApp所有能力（在flutter/cupertino.dart中）。
 
 这3个组件都， 都可以满足你 帮你快速搭建出 干净或不同主题的 app 😊！
+
+
+:::tip 提示
+后两者都基于前者做了扩展，但是一般情况下，不会直接使用WidgetsApp，而是使用MaterialApp或者CupertinoApp。
+
+最佳实践：MaterialApp 是大多数 Flutter 应用的默认选择，很多 Flutter 开发者都是从 MaterialApp 开始的，这也是为什么官方推荐使用 MaterialApp
+:::
+
+:::warning 提示
+需注意 WidgetsApp中不允许使用 Material/CupertinoApp 的组件， 这跟原生html中不允许使用vue或react组件是一个道理。
+:::
