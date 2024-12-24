@@ -164,3 +164,5 @@ class MyHomePageState extends State<MyHomePage> {
 一般来说，如果你的应用结构比较简单，第一个方式也能满足需求；      
 但如果项目较大，组件逻辑较复杂，第二种方式能够更好地进行解耦和组织。      
 两者并无实质区别， 仅在组织代码和组件层次上有些不同！
+
+另外还一个新手值得注意的是：当你使用 TabBar 和 TabBarView 时，通常 不需要在每个标签页中再次定义 Scaffold，因为 Scaffold 已经在外部的 TabBar 所在的父组件中定义好了，避免冗余的 Scaffold 定义。
