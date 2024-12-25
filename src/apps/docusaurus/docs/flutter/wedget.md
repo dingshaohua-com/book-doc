@@ -68,7 +68,7 @@ void main() {
 class MyAppWidget extends StatefulWidget {
   const MyAppWidget({super.key});
 
-  // 它是一个用于创建与该 widget 关联的 State 对象 的 工厂函数（固定写法）！
+  // 它是一个用于创建与该 widget 关联的 State 对象 的 工厂函数（固定写法w）！
   @override
   MyAppWidgetState createState() => MyAppWidgetState();
 }
