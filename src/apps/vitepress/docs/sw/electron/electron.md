@@ -1,5 +1,5 @@
 ---
-order: 2
+order: 1
 ---
 
 # Electron 接入
