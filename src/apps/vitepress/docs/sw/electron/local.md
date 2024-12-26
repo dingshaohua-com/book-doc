@@ -133,7 +133,7 @@ rtc.registerEventHandler({
     } else if (txQuality == 5 || txQuality == 6) {
       netQuality = "糟糕";
     }
-    console.log('网络状态', netQuality);
+    console.log("网络状态", netQuality);
   },
 });
 ```
@@ -159,4 +159,16 @@ const options = new ChannelMediaOptions();
 options.publishCameraTrack = false; // 停止摄像头推流
 options.publishMicrophoneTrack = false; // 停止麦克风推流
 rtc.updateChannelMediaOptions(options);
+```
+
+## 其他常用配置项
+
+### 镜像模式
+```js
+const config = {
+  renderMode: "RenderModeHidden",
+  mirrorMode: 1, // 2 为镜像模式
+};
+
+rtc.setLocalRenderMode(...Object.values(config));
 ```
