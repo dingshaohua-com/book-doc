@@ -56,3 +56,32 @@ Uncaught Error: contextBridge API can only be used when contextIsolation is enab
 
 
 结论：如果想要使用require，则不应该使用contextBridge API！
+
+<!-- https://github.com/electron/electron/issues/35587 -->
+<!-- https://juejin.cn/post/6891926135630725128 -->
+
+
+## 其它
+### 预加载中使用esm
+修改文件为 preload.mjs
+```js
+new BrowserWindow({
+  // ...
+  webPreferences: {
+    nodeIntegrationInWorker: true
+     // ...
+  },
+});
+```
+
+## require is not defined
+需要在创建窗口时启用 nodeIntegration,这样在窗口中才可以使用 require 和 process 这样的 node APIs。不过官方推荐的做法是使用 preload，[详情见官方文档](https://www.electronjs.org/docs/latest/tutorial/security#2-do-not-enable-nodejs-integration-for-remote-content)
+```js
+createWindow() {
+  win = new BrowserWindow({
+    width: 800,
+    height: 600,
+    webPreferences: { nodeIntegration: true }, // 设置为true
+  })
+}
+```
