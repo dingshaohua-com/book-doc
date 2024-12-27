@@ -45,3 +45,8 @@ const test = async () => {
 
 ## 建议
 官方说：绝对不要启用 Node.js 集成，要限制您授予远程内容的权限, 从而使攻击者在您的网站上执行 JavaScript 时更难伤害您的用户。
+
+另外开启Node集成后，在渲染进程中使用contextBridge API会报错，以为以前的逻辑不再可用：
+```js
+Uncaught Error: contextBridge API can only be used when contextIsolation is enabled
+```
