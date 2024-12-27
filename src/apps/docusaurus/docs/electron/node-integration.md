@@ -46,7 +46,8 @@ const test = async () => {
 ## 建议
 官方说：绝对不要启用 Node.js 集成，要限制您授予远程内容的权限, 从而使攻击者在您的网站上执行 JavaScript 时更难伤害您的用户。
 
-另外开启Node集成后，在渲染进程中使用contextBridge API会报错，以为以前的逻辑不再可用：
+另外开启了上下文隔离后，在渲染进程中使用contextBridge API会报错，以为以前的逻辑不再可用：
 ```js
 Uncaught Error: contextBridge API can only be used when contextIsolation is enabled
 ```
+这个错误提示表明，在启用了上下文隔离（contextIsolation）的情况下，才能使用 contextBridge API。上下文隔离是 Electron 中一种安全机制，用于保护渲染进程免受主进程的恶意代码的影响。
