@@ -1,14 +1,84 @@
-
-
 # 打包
 
 ## 什么是打包
 
 你的 electron app 总归是要发给别人一个安装包或者程序吧，不可能吧源码发给用户然后让他 `yarn electron .` 吧？！  
-Electron 目前有两种打包工具：electron-builder 和 electron-packager，目前前者用的多，所以主要讲前者。
+Electron 目前有两种打包工具：[electron-builder](https://www.electron.build) 和 electron-packager，目前前者用的多，所以主要讲前者。
 
-在 electron 项目中 安装 `yarn add --dev electron-builder` ，安装完毕执行它进行打包 `yarn electron-builder` ，之后你项目根目录就会出现打包后的目录 dist。
+在 electron 项目中 安装 `npm i --D electron-builder` ，安装完毕执行它进行打包 `npm i --D electron-builder` ，之后你项目根目录就会出现打包后的目录 dist。
 
+## 配置文件
+
+配置可以在 package.json 里配置 build 字段，也可以单独创建一个文件叫 `electron-builder.json` ，在里面写。
+
+```json
+{
+  "appId": "com.dsh.demo",
+  "productName": "xx助手",
+  "electronLanguages": ["zh-CN"],
+  "buildDependenciesFromSource": true,
+  "nodeGypRebuild": false,
+  "npmRebuild": false,
+  "asar": false,
+  "buildVersion": "1",
+  "artifactName": "${productName}-${version}.${ext}",
+  "directories": {
+    "output": "../../../dist"
+  },
+
+  "mac": {
+    "icon": "src/files/logo/logo.icns",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["universal"]
+      }
+    ],
+    // "publish": {
+    //   "provider": "generic",
+    //   "url": "https://file.dingshaohua.com/demo-app/update"
+    // },
+    "x64ArchFiles": "*"
+  },
+  "win": {
+    "icon": "src/files/logo/logo.ico",
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["ia32", "x64", "arm64"]
+      }
+    ]
+    // "publish": {
+    //   "provider": "generic",
+    //   "url": "https://file.dingshaohua.com/car-app/update"
+    // }
+  },
+  "nsis": {
+    "oneClick": false,
+    "perMachine": true,
+    "allowElevation": true,
+    "allowToChangeInstallationDirectory": true,
+    "deleteAppDataOnUninstall": true,
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true
+  },
+  "extraResources": ["electron-builder.json"]
+}
+```
+
+## 开始打包
+
+在 package.json 中添加打包脚本：
+
+```json
+{
+  // ...
+  "scripts": {
+    "dev": "electron .", // 启动
+    "build": "electron-builder"  // 打包
+  }
+}
+```
 
 ## 打包内容
 
@@ -168,6 +238,7 @@ windows 应用中，你的源码将会打包在 `win-unpacked\resources\app`目�
 一般用于包含额外的文件或目录到应用的最终安装包里。这些文件可能是配置文件、字体、数据库初始化脚本等等 非程序本身相关的代码文件。
 
 配置同 files 一样。
+
 ```js
 "extraResources": [
   {

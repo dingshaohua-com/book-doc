@@ -8,6 +8,11 @@ Electron 处理 app 更新主流的方式是使用 `electron-updater` 这个插�
 
 ## 基本使用
 
+### 安装插件
+```shell
+npm i --D electron-updater
+```
+
 ### 添加升级代码
 
 可以在一个合适的地方，调用更新检查方法，比如在应用启动时调用。
@@ -40,7 +45,7 @@ app.whenReady().then(() => {
     ...
     "publish": {
       "provider": "generic",
-      "url": "https://cos.dingshaohua.com/car-app"
+      "url": "https://file.dingshaohua.com/some-dir"
     }
   }
 }
@@ -58,7 +63,8 @@ Provider 表示以何种方式进行应用的升级
 
 此时执行构建操作，会发现构建包里多出两个文件 `dist/latest-mac.yml` 和 `xx.app/Contents/Resources/app-update.yml`。
 
-第一个文件记录了 app 最新的版本（也就是当前你打包的这个）信息，这个需要上传到你如上配置的服务器地址上 （https://cos.dingshaohua.com/car-app）。
+第一个文件记录了 app 最新的版本（也就是当前你打包的这个）信息，这个需要上传到你如上配置的服务器地址上 （如 我这里是 https://file.dingshaohua.com/some-dir）。
+
 
 ```yml title="latest-mac.yml"
 version: 0.0.2
@@ -79,13 +85,34 @@ releaseNotes: "新增动态转发功能\r\n修复Bug，优化UI"
 
 ```yml title="app-update.yml"
 provider: generic
-url: https://cos.dingshaohua.com/car-app
-updaterCacheDirName: car-helper-updater
+url: https://file.dingshaohua.com/some-dir
+updaterCacheDirName: some-dir-updater
+
 ```
+
+updaterCacheDirName: some-dir-updater 指的是 从远端下载的更新目录位置。
 
 ### 上传构建包到服务器
 
 如上，除将 `latest-mac.yml` 上传到你配置服务器上，还需要将 `dist/测试-0.0.1-mac.zip` 上传到你配置的服务器地址上。
+
+注意的是更新安装包，一定要打两个target 传到服务器上，一个是dmg 一个是zip，[这两个都需要上传](https://github.com/electron-userland/electron-builder/issues/6951#issuecomment-2227992474)。
+```js title="electron-builder.json"
+// 这样就可以打两个包了
+"mac": {
+    "icon": "src/files/logo/logo.icns",
+    "target": [
+      {
+        "target": "dmg",
+        "arch": ["universal"]
+      },
+      {
+        "target": "zip",
+        "arch": ["universal"]
+      }
+    ],
+  },
+```
 
 ### 验证
 
@@ -132,6 +159,7 @@ autoUpdater.on("update-downloaded", (res) => {
 });
 
 // 第五步：当下载完成后，弹窗是否立即重启并更新，如果是则执行如下方法，用web主动调用
+// 注意 quitAndInstall必须在程序签名之后才可以用 https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226
 const installUpdate = () => {
   autoUpdater.quitAndInstall();
 };
@@ -154,8 +182,8 @@ autoUpdater.on("update-not-available", (message) => {
 });
 ```
 
-## 其它配置项
-
+## 其它
+### 更多配置项
 以上示例已经能完美的制作更新了，若你还不满足，考虑结合以下 api
 
 ```js
@@ -165,3 +193,8 @@ autoUpdater.forceDevUpdateConfig = true; // 开发环境下强制更新
 autoUpdater.setFeedURL("http://cos.dingshaohua.com"); // 设置升级包所在的地址
 autoUpdater.autoInstallOnAppQuit = true; // 应用退出后自动安装
 ```
+
+## 旧版本注意
+旧版里一定要包含 app-update.yml，否则相当于没有自动更新的能力！
+
+如果用户收的旧版本 app，你还没有集成autoUpdater，那么你需要说服他来一次完整的全量更新，而非热更新！
