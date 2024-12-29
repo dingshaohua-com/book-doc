@@ -22,7 +22,7 @@ dependencies:
 首先需要 将根组件用 ProviderScope 包裹，   
 因为 ProviderScope 组件 为你的应用提供管理和使用全局状态的一个上下文容器。
 
-这个你在react使用redux是一样的，不是吗？
+这个和你在react使用redux，是一样的！
 
 ```dart title="main.dart"
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,12 +48,12 @@ final msgProvider = StateProvider<String>(
 
 
 ### 页面使用
-页面组件需要继承自 ConsumerWidget。
+页面组件需要继承自 ConsumerWidget。   
 ![](https://img.dingshaohua.com/book-fe/202412292001669.gif)
 ```dart title="demo_page.dart"
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:imusic/store/play_store.dart';
+import 'package:demo/store.dart';
 
 class DemoPage extends ConsumerWidget {
   const DemoPage({super.key});
@@ -61,13 +61,13 @@ class DemoPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 获取全局状态 msg
-    final msg = ref.watch(authorNameProvider);
+    final msg = ref.watch(msgProvider);
     return Column(
       children: [
         Text(msg),  // 读取
         ElevatedButton(
           onPressed: () {
-            ref.read(authorNameProvider.notifier).state = "你好"; // 设置
+            ref.read(msgProvider.notifier).state = "你好"; // 设置
           },
           child: const Text('测试'),
         )
@@ -83,7 +83,7 @@ class DemoPage extends ConsumerWidget {
 ```dart
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:imusic/store/play_store.dart';
+import 'package:demo/store.dart';
 
 class DemoPage extends StatelessWidget {
   const DemoPage({super.key});
@@ -92,12 +92,12 @@ class DemoPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer(builder: (context, ref, child) {
       // 获取全局状态 msg
-      final msg = ref.watch(authorNameProvider);
+      final msg = ref.watch(msgProvider);
       return Column(children: [
         Text(msg), // 读取
         ElevatedButton(
           onPressed: () {
-            ref.read(authorNameProvider.notifier).state = "你好"; // 设置
+            ref.read(msgProvider.notifier).state = "你好"; // 设置
           },
           child: const Text('测试'),
         )
@@ -119,6 +119,14 @@ final msgProvider = Provider<String>(
 );
 ```
 这样，你再调用修改的API，就会报错！
+
+### 参数解读
+定义状态的一些关键字解读
+* StateProvider：管理可变的状态，它允许你通过 .state 来读取和更新状态。
+* ProviderScope ：Riverpod 的根组件，管理应用的所有 Provider。它通常放置在 MaterialApp 或 CupertinoApp 上层。
+* ConsumerWidget：Riverpod 的一种特殊类型的 StatelessWidget，它可以通过 WidgetRef 访问和订阅 Provider。每当 Provider 中的状态变化时，ConsumerWidget 会自动重新构建。
+* ref.watch：监听 counterProvider 的值。当 counterProvider 的值发生变化时，Counter 组件会自动重新构建并显示新的值。
+* ref.read：获取 StateProvider 的 StateController，然后通过 .state 修改它的值。
 
 
 ## 和redux或vuex对比
