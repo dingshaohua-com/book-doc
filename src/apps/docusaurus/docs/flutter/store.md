@@ -250,6 +250,10 @@ ref.read(manProvider.notifier).state = manState.copyWith(
 );
 ```
 
+:::tip 融汇贯通
+Redux / Vuex / Flux：前端框架的状态管理（如 Redux 和 Vuex）都强调 不可变性 和 单向数据流。这些概念与 Flutter 的 Riverpod 和 Provider 很相似，都要求每次更新状态时，不直接修改原有状态，而是返回一个新的状态对象。这种方式可以避免副作用，并且帮助状态变化的可追踪性。
+:::
+
 ### 参数解读
 
 定义状态的一些关键字解读
