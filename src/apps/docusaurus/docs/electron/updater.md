@@ -159,7 +159,7 @@ autoUpdater.on("update-downloaded", (res) => {
 });
 
 // 第五步：当下载完成后，弹窗是否立即重启并更新，如果是则执行如下方法，用web主动调用
-// 注意 quitAndInstall必须在程序签名之后才可以用 https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226
+// 注意 quitAndInstall必须在程序签名之后才可以用 
 const installUpdate = () => {
   autoUpdater.quitAndInstall();
 };
@@ -198,3 +198,6 @@ autoUpdater.autoInstallOnAppQuit = true; // 应用退出后自动安装
 旧版里一定要包含 app-update.yml，否则相当于没有自动更新的能力！
 
 如果用户收的旧版本 app，你还没有集成autoUpdater，那么你需要说服他来一次完整的全量更新，而非热更新！
+
+## 一定要签名
+正如[这个人所提](https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226)，我们必须对 新旧版本包 的app 进行签名（公证非必须），才能自动重启安装 `autoUpdater.quitAndInstall()`。否则执行这个方法会没有反应！
