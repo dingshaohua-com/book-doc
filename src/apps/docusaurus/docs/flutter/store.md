@@ -264,6 +264,37 @@ Redux / Vuex / Flux：前端框架的状态管理（如 Redux 和 Vuex）都强�
 - ref.watch：监听 counterProvider 的值。当 counterProvider 的值发生变化时，Counter 组件会自动重新构建并显示新的值。
 - ref.read：获取 StateProvider 的 StateController，然后通过 .state 修改它的值。
 
+
+## action
+如上 我们定义的 StateProvider的状态，是可以直接被修改的，这个很想 vue的 pinia，直接修改状态： `ref.read(manProvider.notifier).state = "xxx"`
+
+
+但是如果我们还想通过一个函数去修改，并在此函数里做一些其他逻辑，也就是像vuex或redux的aciton修改状态，我们应该怎么做呢？
+我们应该让你的状态是基于 StateNotifierProvider 创建的，因为他能接受两个参数，其中 第一个参数就是定义action类
+```dart
+// 定义一个管理计数器状态的 StateNotifier
+class CounterNotifier extends StateNotifier<int> {
+  CounterNotifier() : super(0); // 初始值为 0
+
+  // 增加计数器
+  void increment() {
+    state++; // 更新状态
+    print(state); // 还可以打印
+  }
+}
+
+// 创建 StateNotifierProvider 来提供 CounterNotifier
+final counterNotifierProvider = StateNotifierProvider<CounterNotifier, int>((ref) {
+  return CounterNotifier();
+});
+```
+
+使用的时候，我们可以通过 这个action来修改状态
+```dart
+final counter = ref.watch(counterNotifierProvider);
+ ref.read(counterNotifierProvider.notifier).increment();
+```
+
 ## 和 redux 或 vuex 对比
 
 Riverpod 与 Vuex 不同，Vuex 或 redux 则更加灵活且不干扰原组件的生命周期和继承模型 相当的解耦合，但 Riverpod 在 Flutter 中的集成方式更为 紧密，尤其是涉及到组件的构建和状态管理时。  
