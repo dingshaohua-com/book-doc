@@ -79,20 +79,10 @@ Developer ID Application
 
 ### 指定使用的证书
 
-通过 identity 指定打包签名所用证书，其实以不配置，electron-builder 在打包的时候会自动寻找证书，推荐不配置。
+electron-builder 在打包的时候会自动寻找相关证书，不用手动配置。
 
-```js title="electron-builder.json"
-{
-    "mac": {
-      "identity": "xxx (xxxxxxxx)"
-    },
-    "mac": {
-      "identity": "xxx (xxxxxxxx)"
-    }
-}
-```
 
-### 指定描述文件
+### 指定描述文件(mas 平台需要配置)
 
 描述文件，内部定义了 apple 开发者账号相关信息，打包工具利用它最终会将信息注入到打包后的 info.plist 内，如果上传到 app store 必须配置此项，否则签名异常。
 

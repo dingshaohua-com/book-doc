@@ -199,5 +199,16 @@ autoUpdater.autoInstallOnAppQuit = true; // 应用退出后自动安装
 
 如果用户收的旧版本 app，你还没有集成autoUpdater，那么你需要说服他来一次完整的全量更新，而非热更新！
 
+
+## mas格式不支持
+![](https://img.dingshaohua.com/book-fe/202412311359031.png)
+
+由于 apple store里的 app必须开启沙盒权限，这就导致mas格式的（也就是上架到 苹果应用商店）的 app 无法使用 electron-updater 进行更新，只能通过新版全量覆盖的方式进行更新。
+![](https://img.dingshaohua.com/book-fe/202412311357872.png)
+
+这里有有两个相关 issue： [issue1](https://github.com/ElectronNET/Electron.NET/issues/840), [issue2](https://github.com/electron-userland/electron-builder/issues/4039)
+
+
+
 ## 一定要签名
 正如[这个人所提](https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226)，我们必须对 新旧版本包 的app 进行签名（公证非必须），才能自动重启安装 `autoUpdater.quitAndInstall()`。否则执行这个方法会没有反应！

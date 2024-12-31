@@ -3,6 +3,63 @@ sidebar_position: 3
 ---
 
 # 权限
+* macos app上，你用到的额权限都需要在 plist文件中声明。
+* 最后在用到地方，用代码动态申请权限
+
+
+## 没有用到任何权限
+在没有用到任何权限的情况下，个人分发下（既dmg格式）你不需要创建权限配置文件。
+
+但是如果你需要上架到apple store，那你即便项目中没有用到任何权限，你也需要在项目中创建 `xx.plist` 权限配置文件，因为 apple store 上架要求你开启沙盒等一些列必备的相关权限，这跟你业务代码没关系，这是 苹果商店要求的。
+
+创建权限列表文件（需要两个）
+```xml title="entitlements.mas.plist"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//ZN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.cs.allow-unsigned-executable-memory</key>
+    <true/>
+    <key>com.apple.security.cs.allow-dyld-environment-variables</key>
+    <true/>
+    <key>com.apple.security.network.client</key>
+    <true/>
+  </dict>
+</plist>
+```
+```xml title="entitlements.mas.inherit.plist"
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//ZN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+  <dict>
+    <key>com.apple.security.app-sandbox</key>
+    <true/>
+    <key>com.apple.security.cs.allow-jit</key>
+    <true/>
+    <key>com.apple.security.inherit</key>
+    <true/>
+  </dict>
+</plist>
+```
+
+然后在electron builder中配置使用这两个文件
+```js title="electron-builder.json"
+{
+  "mas": {
+    "entitlements": "entitlements.mas.plist",
+    "entitlementsInherit": "entitlements.mas.inherit.plist",
+    "provisioningProfile": "provision.provisionprofile" // 这个也是必须的，由开发者登录developer.apple.com 下载
+  },
+}
+```
+
+以上是 hello world 最简单的app 上架商店需要的最基本的权限配置，否则你连 testFlight 的机验不过去。
+
+
 
 ## 核心权限配置文件
 :::tip 提示
