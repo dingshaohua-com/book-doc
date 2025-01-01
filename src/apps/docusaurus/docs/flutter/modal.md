@@ -40,6 +40,7 @@ showModalBottomSheet(
 ![](https://img.dingshaohua.com/book-fe/202501012348854.gif)
 
 如果需要 弹窗内部的组件控制高度 设置 `isScrollControlled: true` 即可！
+如果需要手动关闭，执行`Navigator.pop(context)`即可！
 
 ## showDialog
 模态窗组件，这是 material[内置组件](https://api.flutter.dev/flutter/material/showDialog.html)
