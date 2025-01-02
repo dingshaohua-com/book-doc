@@ -1,5 +1,8 @@
 # 上传 apple store
 
+![](https://img.dingshaohua.com/book-fe/202501021029651.png)
+上传到 apple store 的app，必须要开启沙盒权限和一些其打包他配置，这在权限一章有介绍。
+
 ## 上传流程
 你需要登陆 Apple store connect 创建你的软件信息。
 
