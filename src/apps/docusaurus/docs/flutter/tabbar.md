@@ -747,3 +747,131 @@ class AboutScreen extends StatelessWidget {
 [[flutter] 在GoRoute 中使用NavigationBar](https://jiaming0708.github.io/2023/01/09/flutter-goroute-with-navigation-bar/)
 
 
+
+## 结合路由并保持组件状态
+为了[解决这个问题](https://github.com/flutter/packages/pull/2650)，在2022年，flutter官方特意在shellRouter的基础上扩展了一个组件 [StatefulShellRoute](https://pub.dev/documentation/go_router/latest/go_router/StatefulShellRoute-class.html)
+
+一个简单示例：
+```dart
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+// 定义ScaffoldWithNavBar （底部导航和页面展示框架）
+class ScaffoldWithNavBar extends StatelessWidget {
+  const ScaffoldWithNavBar({
+    required this.navigationShell,
+    Key? key,
+  }) : super(key: key ?? const ValueKey('ScaffoldWithNavBar'));
+
+  final StatefulNavigationShell navigationShell;
+
+  @override
+  Widget build(context) {
+    return Scaffold(
+      body: navigationShell,
+      bottomNavigationBar: BottomNavigationBar(
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.home),
+            label: '首页',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.account_circle),
+            label: '我的',
+          ),
+        ],
+        currentIndex: navigationShell.currentIndex,
+        onTap: (int index) => _onTap(context, index),
+      ),
+    );
+  }
+
+  void _onTap(context, index) {
+    var initialLocation = index == navigationShell.currentIndex;
+    navigationShell.goBranch(index, initialLocation: initialLocation);
+  }
+}
+
+// 定义路由
+final GoRouter _router = GoRouter(
+  initialLocation: '/home',
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        return ScaffoldWithNavBar(navigationShell: navigationShell);
+      },
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+                path: '/home', builder: (context, state) => const HomeScreen()),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+                path: '/about',
+                builder: (context, state) => const AboutScreen()),
+          ],
+        ),
+      ],
+    )
+  ],
+);
+
+// 程序入口
+void main() {
+  runApp(MaterialApp.router(
+    routerConfig: _router,
+  ));
+}
+
+// 页面组件
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  HomeScreenState createState() => HomeScreenState();
+}
+
+class HomeScreenState extends State<HomeScreen> {
+  int count = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    // 通过看这里的输出，可以以此判断组件是否被重新加载
+    print('执行了');
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            count++;
+          });
+        },
+        child: Text(
+          '点我后边会自增: $count',
+          textDirection: TextDirection.ltr,
+        ),
+      ),
+    );
+  }
+}
+
+class AboutScreen extends StatelessWidget {
+  const AboutScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('关于')),
+      body: const Center(child: Text('这是关于页 页面')),
+    );
+  }
+}
+```
+<img src="https://img.dingshaohua.com/book-fe/202501100112944.webp" width="300" />
