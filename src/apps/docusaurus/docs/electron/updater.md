@@ -208,19 +208,25 @@ contextBridge.exposeInMainWorld("$electron", {
 ```js title="renderer/app.vue"
 
 // 中划线转大小驼峰命名工具函数
-const kebabCase_to_camelCase = (fileName, upperCamel = false) => {
+export const kebabCase_to_camelCase = (fileName, upperCamel = false) => {
   // 转换为小写，并用正则表达式替换每个分隔符后的字符为大写（除非它是字符串的第一个字符）
-  const newfileName = fileName
+  let newfileName = fileName
     .toLowerCase() // 先转换为小写
     .replace(/[-_\s]+(.)?/g, (match, p1) => (p1 ? p1.toUpperCase() : ""))
     .replace(/^./, (str) => str.toLowerCase()); // 转换为小驼峰
   if (upperCamel) {
-    newfileName.charAt(0).toUpperCase() + newfileName.slice(1);
+    newfileName = newfileName.charAt(0).toUpperCase() + newfileName.slice(1);
   }
   return newfileName;
 };
 
 const checkUpdateEvent = {
+  onUpdateError(params) {
+    console.log("升级失败", params);
+  },
+  onUpdateNotAvailable(params) {
+    console.log("无更新", params);
+  },
   onUpdateAvailable(params) {
     console.log("有更新可用", params);
     window.$electron.downloadUpdate();
@@ -230,7 +236,7 @@ const checkUpdateEvent = {
   },
   onUpdateDownloaded(params) {
     console.log("下载完成", params);
-    console.log("重启生效");
+    console.log("重启生效", params);
     window.$electron.quitAndInstall();
   },
 };
