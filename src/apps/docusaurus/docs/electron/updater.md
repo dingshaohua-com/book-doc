@@ -132,39 +132,32 @@ updaterCacheDirName: some-dir-updater 指的是 从远端下载的更新目录�
 
 以下是 autoUpdater 相关伪代码，相信大家都能看懂，利用这些代码，可以将更新做的很完美
 
-```js
-// 第一步：检查更新（暴露给渲染进程，由渲染进程在合适的时机调用，比如用户点击 检查更新、或者web启动的时候）
-const checkForUpdates = () => {
+```js title="main/ipc/auto-update.js"
+
+import { autoUpdater } from "electron-updater";
+import webSendEnum from "../web-send-enum";
+
+// 检查更新（可以暴露给渲染进程，由渲染进程在合适的时机调用，比如用户点击 检查更新、或者web启动的时候）
+export const checkUpdate = () => {
   autoUpdater.checkForUpdates();
 };
 
-// 第二步：监听有可用更新事件，并通知到用户
-autoUpdater.on("update-available", (data) => {
-  win.webContents.send("update-available", data);
-});
-
-// 第三步：当有可用更新让用户来决定是否下载，这里是web主动调用的
-const downloadUpdate = () => {
+// 下载更新（可以暴露给渲染进程，由渲染进程在合适的时机调用）
+export const downloadUpdate = () => {
   autoUpdater.downloadUpdate();
 };
 
-// 第四步：监听下载进度和完成
-// 下载更新包的进度，可以用于显示下载进度与前端交互等
-autoUpdater.on("download-progress", (progress) => {
-  win.webContents.send("download-progress", progress);
-});
-// 在更新下载完成的时候触发，下载完成之后，弹出对话框提示用户是否立即安装更新
-autoUpdater.on("update-downloaded", (res) => {
-  win.webContents.send("update-downloaded", res);
-});
-
-// 第五步：当下载完成后，弹窗是否立即重启并更新，如果是则执行如下方法，用web主动调用
-// 注意 quitAndInstall必须在程序签名之后才可以用 
-const installUpdate = () => {
+// 重启并安装更新（可以暴露给渲染进程，由渲染进程在合适的时机调用）
+export const quitAndInstall = () => {
   autoUpdater.quitAndInstall();
 };
 
-// --==另外还有一些其他监听事件可以利用==--
+// 封装更新相关的进程通信方法
+const handler = ({ type, data }) => {
+  const win = global.app.mainWindow;
+  win.webContents.send('update', { type, data });
+};
+
 // 监听升级失败事件
 autoUpdater.on("error", (error) => {
   handler({
@@ -172,13 +165,84 @@ autoUpdater.on("error", (error) => {
     data: error,
   });
 });
-
+//监听发现可用更新事件
+autoUpdater.on("update-available", (message) => {
+  handler({
+    type: "update-available",
+    data: message,
+  });
+});
 //监听没有可用更新事件
 autoUpdater.on("update-not-available", (message) => {
   handler({
     type: "update-not-available",
     data: message,
   });
+});
+
+// 更新下载进度事件
+autoUpdater.on("download-progress", (progressObj) => {
+  handler({
+    type: "download-progress",
+    data: progressObj,
+  });
+});
+//监听下载完成事件
+autoUpdater.on("update-downloaded", (releaseObj) => {
+  handler({
+    type: "update-downloaded",
+    data: releaseObj,
+  });
+});
+```
+
+```js title="main/preload.js"
+const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("$electron", {
+   onUpdate:(callback) => ipcRenderer.on("update", (_event, value) => callback(value)),
+});
+```
+
+最后在客户端，我们可以这么做
+```js title="renderer/app.vue"
+
+// 中划线转大小驼峰命名工具函数
+const kebabCase_to_camelCase = (fileName, upperCamel = false) => {
+  // 转换为小写，并用正则表达式替换每个分隔符后的字符为大写（除非它是字符串的第一个字符）
+  const newfileName = fileName
+    .toLowerCase() // 先转换为小写
+    .replace(/[-_\s]+(.)?/g, (match, p1) => (p1 ? p1.toUpperCase() : ""))
+    .replace(/^./, (str) => str.toLowerCase()); // 转换为小驼峰
+  if (upperCamel) {
+    newfileName.charAt(0).toUpperCase() + newfileName.slice(1);
+  }
+  return newfileName;
+};
+
+const checkUpdateEvent = {
+  onUpdateAvailable(params) {
+    console.log("有更新可用", params);
+    window.$electron.downloadUpdate();
+  },
+  onDownloadProgress(params) {
+    console.log("下载中", params);
+  },
+  onUpdateDownloaded(params) {
+    console.log("下载完成", params);
+    console.log("重启生效");
+    window.$electron.quitAndInstall();
+  },
+};
+
+onMounted(() => {
+  if (window.$electron) {
+    window.$electron.checkUpdate();
+    window.$electron.onUpdate((info) => {
+      const eventName = "on" + kebabCase_to_camelCase(info.type, true);
+      checkUpdateEvent[eventName](info.data);
+    });
+  }
 });
 ```
 
