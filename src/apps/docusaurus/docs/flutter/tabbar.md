@@ -921,7 +921,7 @@ final GoRouter router = GoRouter(
 
 ```
 
-最后在ScaffoldWithNavBar这里接收这个 showNavBar，来决定是否显示
+最后在ScaffoldWithNavBar这个骨架（包含底部导航栏+body的骨架）组件里里接收这个 showNavBar，来决定是否显示
 ```dart 
 class ScaffoldWithNavBar extends StatelessWidget {
   const ScaffoldWithNavBar({
@@ -950,6 +950,26 @@ class ScaffoldWithNavBar extends StatelessWidget {
     navigationShell.goBranch(index, initialLocation: initialLocation);
   }
 }
+```
+
+
+### 子页面的完善
+子页面一般需要加一个顶部返回按钮，比如
+```dart
+@override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back),
+            onPressed: () {  // 返回按钮点击事件
+              context.pop();
+            },
+          ),
+        ),
+        body: const Center(child: Text('哈哈'))
+    );
+  }
 ```
 
 
