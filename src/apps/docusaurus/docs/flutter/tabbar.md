@@ -875,3 +875,81 @@ class AboutScreen extends StatelessWidget {
 }
 ```
 <img src="https://img.dingshaohua.com/book-fe/202501100112944.webp" width="300" />
+
+
+### 某些页面不需要bottomBar
+其实除了底部几个tab页面需要bottomBar，大部分子页面都不需要。
+
+路由定义这里，要定义一些需要底部导航的页面的路径，并基于当前路径做判断是否显示底部导航。
+```dart title="router.dart"
+// 定义路由
+final GoRouter router = GoRouter(
+  initialLocation: '/home',
+  routes: [
+    StatefulShellRoute.indexedStack(
+      builder: (context, state, navigationShell) {
+        // 判断是否需要显示底部导航栏(核心)
+        List<String> paths =  ['/home', '/about'];
+        bool showNavBar =paths.any((path)=>state.uri.toString() == path.toString());
+        return ScaffoldWithNavBar(navigationShell: navigationShell, showNavBar: showNavBar);
+      },
+      branches: [
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+              path: '/home',
+              builder: (context, state) => const HomePage(),
+              routes: [
+                GoRoute(
+                  path: 'home_dtl',
+                  builder: (context, state) => const HomeDtlPage(),
+                )
+              ],
+            ),
+          ],
+        ),
+        StatefulShellBranch(
+          routes: [
+            GoRoute(
+                path: '/about', builder: (context, state) => const AboutPage()),
+          ],
+        ),
+      ],
+    )
+  ],
+);
+
+```
+
+最后在ScaffoldWithNavBar这里接收这个 showNavBar，来决定是否显示
+```dart 
+class ScaffoldWithNavBar extends StatelessWidget {
+  const ScaffoldWithNavBar({
+    required this.navigationShell,
+    this.showNavBar=false,
+    Key? key,
+  }) : super(key: key ?? const ValueKey('ScaffoldWithNavBar'));
+
+  final StatefulNavigationShell navigationShell;
+  final bool showNavBar;
+
+  @override
+  Widget build(context) {
+    return Scaffold(
+      body: Stack(children: [navigationShell, const PlayerBall()]),
+      bottomNavigationBar: showNavBar?BottomNavigationBar( //核心在这里
+        items: _barItems,
+        currentIndex: navigationShell.currentIndex,
+        onTap: (int index) => _onTap(context, index),
+      ):null,
+    );
+  }
+
+  void _onTap(context, index) {
+    var initialLocation = index == navigationShell.currentIndex;
+    navigationShell.goBranch(index, initialLocation: initialLocation);
+  }
+}
+```
+
+
