@@ -282,3 +282,20 @@ autoUpdater.autoInstallOnAppQuit = true; // 应用退出后自动安装
 
 ## 一定要签名
 正如[这个人所提](https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226)，我们必须对 新旧版本包 的app 进行签名（公证非必须），才能自动重启安装 `autoUpdater.quitAndInstall()`。否则执行这个方法会没有反应！
+
+
+## 关闭并安装失败
+如果你在 macOS 上遇到了 `quitAndInstall` 没有反应的问题，[可以尝试以下代码](https://github.com/electron-userland/electron-builder/issues/1604)：
+```js
+const quitAndInstall = () => {
+  const electron = require('electron');
+  const app = electron.app;
+  const BrowserWindow = electron.BrowserWindow;
+  app.removeAllListeners('window-all-closed');
+  var browserWindows = BrowserWindow.getAllWindows();
+  browserWindows.forEach(function (browserWindow) {
+    browserWindow.removeAllListeners('close');
+  });
+  autoUpdater.quitAndInstall();
+};
+```
