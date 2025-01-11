@@ -254,7 +254,7 @@ onMounted(() => {
 
 ## 其它
 ### 更多配置项
-以上示例已经能完美的制作更新了，若你还不满足，考虑结合以下 api
+以上示例已经能完美的制作更新了，若你还不满足，[考虑结合以下 api](https://www.electronjs.org/docs/latest/api/auto-updater#methods)
 
 ```js
 autoUpdater.updateConfigPath = path.join(app.getAppPath(), "app-update.yml"); // 更新配置文件地址
