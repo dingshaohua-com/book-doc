@@ -890,7 +890,7 @@ final GoRouter router = GoRouter(
       builder: (context, state, navigationShell) {
         // 判断是否需要显示底部导航栏(核心)
         List<String> paths =  ['/home', '/about'];
-        bool showNavBar =paths.any((path)=>state.uri.toString() == path.toString());
+        bool showNavBar =paths.any((path)=>state.uri.path == path.toString());
         return ScaffoldWithNavBar(navigationShell: navigationShell, showNavBar: showNavBar);
       },
       branches: [

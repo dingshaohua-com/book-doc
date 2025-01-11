@@ -123,6 +123,7 @@ import 'package:go_router/go_router.dart';
 import 'package:demo/home.dart';
 import 'package:demo/about.dart';
 
+// 定义路由
 final GoRouter router = GoRouter(
   routes: [
     GoRoute(
@@ -192,3 +193,76 @@ class AboutWidget extends StatelessWidget {
 :::tip 我该选哪个
 其实不用纠结，只要项目中用到了路由，直接上go_router即可！
 :::
+
+### 与底部导航结合
+如果你的项目中用到了tabbar，还想于路由结合，那么你只是简单的使用普通的方式 定义路由是行不通的。
+这个时候你需要使用 ShellRoute ， 或者 StatefulShellRoute，[查看这里有更多内容！](/flutter/tabbar#与路由结合)
+
+### 路由参数
+两种模式：
+查询参数（query parameters）
+```dart
+// teacher.dart
+onTap: () {
+  context.go('/teacher/detail?id=123');
+}
+
+// router.dart
+GoRoute(
+  path: 'detail',
+  builder: (context, state) {
+    var id = state.uri.queryParameters['id'].toString();
+    return TeacherDetailPage(id: id); // 注意这个组件里接收这个参数
+  }
+)
+
+// TeacherDetail.dart
+class TeacherDetailPage extends StatefulWidget {
+  final String id;
+  const TeacherDetailPage({super.key, required this.id});
+  @override
+  TeacherDetailPageState createState() => TeacherDetailPageState();
+}
+
+class TeacherDetailPageState extends State<TeacherDetailPage> {
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Text('你好，接收到参数：${widget.id}')
+  }
+}
+```
+
+
+
+路径参数（path parameters）
+
+```dart
+// teacher.dart
+onTap: () {
+  context.go('teacher/detail?id=123');
+}
+
+// router.dart
+GoRoute(
+  path: 'detail',
+  builder: (context, state) {
+    var id = state.pathParameters['id'].toString();
+    return TeacherDetailPage(id: id); // 注意这个组件里接收这个参数
+  }
+)
+
+// TeacherDetail.dart
+// 跟上边一样
+
+```
+
+### 导航切换后参数未销毁
+就比如我从 /teacher 跳转到/teacher/dtl?id=123，然后返回上一页 `context.pop()` ，这时在/teacher 里依然能看到这个参数。
+这是go_router的特性，注意踩坑！
+
+github的issue里有相关讨论，可以查看: [issue1](https://github.com/flutter/flutter/issues/117657)、[issue2](https://github.com/flutter/flutter/issues/116872)、 [issue3](https://github.com/csells/go_router/issues/170)。
