@@ -1,6 +1,6 @@
 ---
 sidebar_position: 1
 ---
-# 常见的
+# 简介
 
-vue有两个版本，目前主流vue3
+xxx
