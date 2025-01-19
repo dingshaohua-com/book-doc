@@ -89,6 +89,54 @@ answer.forEach((appName) => {
 ```
 
 
+如果你想超时自动选择，还可以这么做
+```js
+import fs from "node:fs";
+import path from "node:path";
+import { spawn } from "node:child_process";
+import { checkbox } from "@inquirer/prompts";
+import { setTimeout } from "node:timers/promises";
+
+// 获取都有哪些项目
+const ignoreDir = [".DS_Store"];
+const appsDir = path.resolve("apps");
+const apps = fs
+  .readdirSync(appsDir, { withFileTypes: true })
+  .filter((it) => !ignoreDir.includes(it.name));
+
+// 根据用户选择，启动指定项目
+const prompt = checkbox({
+  message: "选择需要启动的项目？",
+  instructions: "😍空格选，回车启动💏",
+  choices: apps.map((item) => ({ name: item.name, value: item.name })),
+});
+
+// 等待用户选择，否则设置默认值（主要应对服务器部署）
+const ac = new AbortController();
+prompt.finally(() => ac.abort()).catch(() => {});
+
+const defaultValue = setTimeout(3000, "timeout", {
+  signal: ac.signal,
+}).then(() => {
+  prompt.cancel();
+  return ["server"];
+});
+const answer = await Promise.race([defaultValue, prompt]);
+
+// 启动选择的项目
+answer.forEach((appName) => {
+  const app = apps.find((it) => it.name === appName);
+  if (ignoreDir.includes(app.name)) return false;
+  const appPath = path.resolve(app.parentPath, app.name);
+  spawn("npm run", ["--prefix", appPath, "dev"], {
+    stdio: "inherit",
+    shell: true,
+  });
+});
+```
+
+不过需要注意的是，这种交互方式的启动，在服务器上部署时，可能不太友好，因为用户无法交互，从而会导致pm2启动失败！
+
 
 ## 参考
 [Monorepo多项目管理不再难！](https://juejin.cn/post/7454035377106599963)
