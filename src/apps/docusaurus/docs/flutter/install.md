@@ -37,3 +37,5 @@ Tools • Dart 3.5.4 • DevTools 2.37.3
 
 ## 安装 andriod环境
 这里有[具体教程](/android/env)
+
+<!-- https://www.jkkf.cn/flutter-optimization/network-cache.html -->
