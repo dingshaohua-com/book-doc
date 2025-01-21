@@ -85,3 +85,26 @@ const Row(
     children: [],
 )
 ```
+
+
+## 高度
+### 最大高度超出滚动
+使用 constraints 来约束最大高度。通过 BoxConstraints 可以设定 maxHeight。   
+使用 SingleChildScrollView 包裹了 Column，这样当 Column 的内容超出 Container 的高度时，它会允许滚动。
+```dart
+Container(
+  constraints: BoxConstraints(
+    maxHeight: 300, // 设置最大高度
+  ),
+  child: SingleChildScrollView(
+    child: Column(
+      children: List.generate(20, (index) {
+        return ListTile(
+          title: Text('Item $index'),
+        );
+      }),
+    ),
+  ),
+)
+
+```
