@@ -1,10 +1,5 @@
-# 更新
-
-什么 app 都会涉及到更新，electron 做的 app 也不例外！
-
-Electron 处理 app 更新主流的方式是使用 `electron-updater` 这个插件，该插件目前已经被 electron 官方收编，其文档被收纳到了 [electron 官方文档中](https://www.electron.build/auto-update)。
-
-以下列出使用方式!
+# 全量更新
+Electron 处理 app 更新官方推荐的是使用 `electron-updater` 这个插件，该插件目前已经被 electron 官方收编，其文档被收纳到了 [electron 官方文档中](https://www.electron.build/auto-update)，这个插件本质上是全量更新！
 
 ## 基本使用
 
@@ -281,7 +276,7 @@ autoUpdater.autoInstallOnAppQuit = true; // 应用退出后自动安装
 
 
 ## 一定要签名
-正如[这个人所提](https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226)，我们必须对 新旧版本包 的app 进行签名（公证非必须），才能自动重启安装 `autoUpdater.quitAndInstall()`。否则执行这个方法会没有反应！
+正如[这个人所提](https://github.com/electron-userland/electron-builder/issues/8178#issuecomment-2089916226)，我们必须对 新旧版本包 的app 进行签名（公证非必须），才能自动重启安装 `autoUpdater.quitAndInstall()`。否则执行这个方法会没有反应，后期再次验证，无论是mac和win最好都要签名。
 
 
 ## 关闭并安装失败
