@@ -281,3 +281,28 @@ const rtcInit = async () => {
 }
 </style>
 ```
+
+## 常见问题
+
+## 预构建失败
+使用 `agora-electron-sdk` 需要注意事项如下：   
+此包存在postInstall，在yarn下 会构建不成功，既不会在包内产出 `build`。
+
+## 打包失败
+electron-builder.json `mac>target>arch`不能设置为`universal` ，   
+否则，构建的时候也会如下两种情况的报错：
+
+在关闭`asar`报错如下：
+```shell
+ ⨯ ENOENT: no such file or directory, ensureSymlink 'Versions/Current/Headers'  failedTask=build stackTrace=Error: ENOENT: no such file or directory, ensureSymlink 'Versions/Current/Headers'
+```
+
+
+在开启`asar`报错如下：
+```shell
+ ⨯ pattern is too long  failedTask=build stackTrace=TypeError: pattern is too long
+```
+:::tip
+这个问题跟 electron 版本无关，尝试过 v22 和 v32 均有此问题！
+:::
+
