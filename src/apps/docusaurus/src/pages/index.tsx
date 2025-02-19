@@ -12,9 +12,12 @@ export default function Home(): JSX.Element {
   const { siteConfig } = useDocusaurusContext();
   const location = useLocation();
   const router = useHistory();
-  const goDynamicNavbar = (docType) => {
-    console.log(111, docType);
-    
+  const goDynamicNavbar = (docType, item) => {
+    console.log(111, docType, item);
+    if(item.link){
+      window.open(item.link);
+      return;
+    }
     const firstDocspath = getFirstDocspath(docType);
     router.push(firstDocspath);
   };
@@ -26,7 +29,7 @@ export default function Home(): JSX.Element {
           <div className={style.docs} key={item}>
             <img src={navbars[item].icon} />
             <div className={style.content}>{navbars[item].content}</div>
-            <div className={style.title} onClick={()=>goDynamicNavbar(item)}>{navbars[item].title}</div>
+            <div className={style.title} onClick={()=>goDynamicNavbar(item, navbars[item])}>{navbars[item].title}</div>
           </div>
         ))}
       </div>

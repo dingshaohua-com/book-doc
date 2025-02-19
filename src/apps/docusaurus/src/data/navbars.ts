@@ -132,6 +132,13 @@ const dynamicNavbarCfg = {
       
     ],
   },
+  vitepress: {
+    title: "其它",
+    content: "针对vue周边，采用vitepress副站",
+    icon: holyTrinityImg,
+    link:'https://doc.dingshaohua.com/vitepress',
+    children: [],
+  },
   about: {
     title: "关于我",
     content: "强大如我，快来了解",
