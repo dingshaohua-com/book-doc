@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "docusaurus": "docusaurus",
-    "dev":"npm run start",
+    "dev": "npm run start",
     "start": "docusaurus start --host 0.0.0.0",
     "build": "docusaurus build --out-dir dist",
     "swizzle": "docusaurus swizzle",
@@ -16,23 +16,26 @@
     "typecheck": "tsc"
   },
   "dependencies": {
-    "@docusaurus/core": "^3.6.3",
-    "@docusaurus/preset-classic": "^3.6.3",
-    "@docusaurus/theme-live-codeblock": "^3.6.3",
+    "@docusaurus/core": "^3.7.0",
+    "@docusaurus/preset-classic": "^3.7.0",
+    "@docusaurus/theme-live-codeblock": "^3.7.0",
     "@mdx-js/react": "^3.1.0",
+    "antd": "^5.24.1",
+    "classnames": "^2.5.1",
     "clsx": "^2.1.1",
-    "docusaurus-plugin-sass": "^0.2.5",
-    "prism-react-renderer": "^2.4.0",
+    "docusaurus-plugin-sass": "^0.2.6",
+    "prism-react-renderer": "^2.4.1",
     "raw-loader": "^4.0.2",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "sass": "^1.81.0"
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-markdown": "^9.0.3",
+    "sass": "^1.85.0"
   },
   "devDependencies": {
-    "@docusaurus/module-type-aliases": "^3.6.3",
-    "@docusaurus/tsconfig": "3.6.3",
-    "@docusaurus/types": "3.6.3",
-    "typescript": "~5.7.2"
+    "@docusaurus/module-type-aliases": "^3.7.0",
+    "@docusaurus/tsconfig": "3.7.0",
+    "@docusaurus/types": "3.7.0",
+    "typescript": "~5.7.3"
   },
   "browserslist": {
     "production": [

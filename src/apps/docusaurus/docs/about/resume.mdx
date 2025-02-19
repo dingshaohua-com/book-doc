@@ -1,0 +1,188 @@
+---
+hide_title: true
+sidebar_position: 2
+sidebar_label: 2025简历
+---
+
+import PesonInfo from "/src/components/PesonInfo";
+import { Card, Space, hr, Button, Timeline } from "antd";
+import JlImg from "@site/static/img/about/经历.png";
+import XmImg from "@site/static/img/about/项目.png";
+import Markdown from 'react-markdown';
+
+{/* <Before/> */}
+
+<PesonInfo />
+
+
+
+
+## <img src={JlImg} className="type-icon"/> 工作经历
+
+<Timeline
+  items={[
+    {
+      children: (
+<Markdown>
+{`
+**20124-07~至今 | 豆神教育 | 高级前端开发**   
+工作描述： 基本业务开发，框架选型和架构项目等。
+`}
+</Markdown>
+      ),
+    },
+    {
+      children: (
+<Markdown>
+{`
+**2019-11~2023-10 | 擎盾信息科技有限公司 | 前端组长**   
+工作描述：带领团队、基本业务开发、需求评审与安排、前端基建、框架选型、疑难问题处理、组织技术分享和培训、定做公司 cli 等。
+`}
+</Markdown>
+      ),
+    },
+    {
+      children: (
+<Markdown>
+{`
+**2019.01~2019.10 | 锤子科技 | 高级前端开发**        
+工作描述：负责项⽬迭代、需求开发、组件封装、优化和bug修复。
+`}
+</Markdown>
+      ),
+    },
+    {
+      children: (
+
+<Markdown>
+{`
+**2017.10~2018.12 | 北京斯塔克⽂化传媒有限公司 | 前端组长**   
+工作描述： 配合产品和UI精准还原UI界⾯，配合后端⼯完成数据交互。并确定框架和技术选型、以及安排工作和带新人。
+`}
+</Markdown>
+      ),
+    },
+    {
+      children: (
+<Markdown>
+{`
+**2015.01-2017.09  | 北京创宏世纪科技有限公司 | 前端开发**       
+工作描述： 负责项⽬需求迭代的开发、代码优化和BUG修复、调研新技术 如小程序等并引用到新项目中
+`}
+</Markdown>
+      ),
+    },
+  ]}
+/>
+
+<div style={{marginTop: 200}}/>
+
+## <img src={XmImg} className="type-icon"/> 项目经验
+
+<Timeline 
+  className="my-timeline"
+  items={[
+{
+      
+children: (<Markdown>
+{`
+
+**2024-07~至今　|　[豆伴匠](https://douyuxingchen.com)　|　豆神教育** 
+
+项目简介：在线教育平台。
+
+我的职责：
+* 负责其web项目基建以及部分业务开发，和 electron项目所有开发
+* 对接声网平台，完成直播平台从[百家云](https://www.baijiayun.com)到[声网](https://shengwang.cn)的迁移
+* 负责苹果Mac和Windows的打包、签名、公证直至上架整个流程
+* 技术栈为 vue3、ts、less、element ui、electron。
+`}
+</Markdown>
+)},
+
+    {
+      
+children: (<Markdown>
+{`
+
+**2019-11~2023-10　|　[12368 诉服平台](https://www.aegis-info.com/product/21.html)　|　擎盾信息科技有限公司** 
+
+项目简介：toG 的产品，提供给法院使⽤的案件录⼊系统，已在最⾼⼈⺠法院、河南、重庆等 20 多个省份落地。
+
+我的职责：
+* 基本的项目的维护和迭代版本开发，不仅限于工单和系统设置等模块开发
+* vue3 进行重构，包含各种工具封装等项目基建一系列的工作
+* 管理工作，对接产品整理需求和安排工作，以及组员疑难问题的解决，还有定期的 codeReview
+* 技术栈为 vue3、ts、less、antd、ws、jssip/webrtc、pinia。
+`}
+</Markdown>
+)},
+{children: (
+<Markdown>
+{`
+
+**2019.01~2019.10　|　松果⽂档　|　锤子科技**  
+项目简介：基于 onlyOffice 的在线⽂档⼯具。⽀持导⼊导出，Office 格式全兼容，⽀持协同、评论交流，并且提供模板。
+
+我的职责：
+* 负责文档编辑器的协作 批注以及文档模板等模块的开发
+* 优化组件，比如在不需要更新的组件上阻止 reRender，重新拆分组件更好模块化并利用高阶组件来复用
+* 将项目的class组件逐步转为 hooks。
+* 流畅使用 chrome debug（JavaScript Profiler）能力，来查找其核心 onlyOffice 的功能
+* 技术栈是 react、less、antd、ts、ws、redux。
+
+`}
+</Markdown>
+)},
+{children: (
+<Markdown>
+{`
+
+**2017.10~2018.12　|　运输中⼼ App　|　北京斯塔克⽂化传媒有限公司**  
+项目简介：B2B 的项目，一共有多个 app，此 app 只是其中一环，接受上游的订单派遣，运输货物。
+
+我的职责：
+* 维护已有的 angularjs 的版本，修复 bug 并迭代开发
+* 使用 vue2 重构，全权把控整个框架选型和项目基建 以及任务分配
+* 技术调研 ionic 技术以及 Android 原生相关，和原生交互，开发组件。共同处理原生需求。
+* 参与需求评审和工作安排 以及与 ui 和后端对接沟通。
+* 独立学习了 angular2+， 支援贸易中心 app 组。
+* 技术栈 ionic、vue、framework7
+
+`}
+</Markdown>
+)},
+{children: (
+<Markdown>
+{`
+
+
+**2015.01~2017.09　|　⾃由岛健⾝管理系统　|　北京创宏世纪科技有限公司**  
+项目简介：⾃由岛健⾝管理系统 专注于健⾝⾏业的垂直信息管理 PMS 系统
+
+我的职责：
+* 维护 jquery 版本项目的迭代和开发
+* 将项目逐步转换为 angluarjs 版本
+* 除公司的核心项目之外，还主导开发了一些其它小项目如语⾳闹钟小程序、自由岛小程序
+* 技术栈 angluarjs、bootstarp、jquery
+
+`}
+</Markdown>
+)}
+]}/>
+
+<div className="noprint" style={{ marginTop: "10px", textAlign: "center" }}>
+  <Space>
+    <Button
+      type="primary"
+      onClick={() => {
+        print();
+      }}
+    >
+      打印
+    </Button>
+    <a href="../../img/about/前端-丁少华.pdf" download target="_blank">
+      <Button type="primary">导出为PDF</Button>
+    </a>
+  </Space>
+</div>

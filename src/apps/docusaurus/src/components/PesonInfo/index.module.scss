@@ -1,0 +1,194 @@
+
+
+@media print {
+
+  .top,
+  .skill {
+    box-shadow: none !important;
+    border: rgba(0, 0, 0, 0.1) solid 1px;
+  }
+}
+
+
+
+
+.PesonInfo {
+  margin-top: 20px;
+  width: 950px;
+
+  .top {
+    border-radius: 10px;
+    border: rgba(0, 0, 0, 0.1)  solid 2px;
+    // box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    padding: 20px 10px;
+    margin: 0 auto;
+    margin-top: 20px;
+
+    .head {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      border-bottom: rgb(210, 210, 210) solid 1px;
+      gap: 30px;
+
+      .img {
+        height: 100px;
+        width: 100px;
+        border-radius: 20px;
+
+      }
+
+      .tag {
+        font-size: 14px;
+        text-align: left;
+
+        .name {
+          font-size: 18px;
+          font-weight: 700;
+          margin-bottom: 6px;
+        }
+      }
+
+    }
+
+    .body {
+      display: flex;
+      justify-content: space-around;
+      font-size: 13px;
+
+      .opts {
+        flex: 1;
+        text-align: center;
+        padding: 6px 0;
+        &:nth-last-of-type(2) {
+          border: rgb(210, 210, 210) solid 1px;
+          border-top: none;
+          border-bottom: none;
+        }
+      }
+
+
+      // .skip{
+      //   margin-top: 10px;
+      //   position: relative;
+      //   &:not(:nth-last-of-type(1)):after{
+      //     top: 10px;
+      //     right: -18px;
+      //     height: 70%;
+
+      //     position: absolute;
+      //     content: '';
+      //     display: block;
+      //     border-right:rgb(210, 210, 210) solid 1px ;
+      //   }
+      //   &>div{
+      //     display: flex;
+      //   }
+      // }
+    }
+  }
+
+  .bottom {
+    // margin-top: 30px;
+    border-radius: 20px;
+    padding: 8px;
+
+    .skillsLable {
+      border-bottom: 1px solid #cbcaca;
+      padding: 10px 0;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    .skills {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+
+      .hidden {
+        opacity: 0;
+      }
+
+      .skill {
+        border-radius: 10px;
+        background-color: white;
+        box-shadow: rgba(0, 0, 0, 0.05) 0px 6px 24px 0px, rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+        margin-bottom: 10px;
+        padding: 12px 4px;
+        width: 32%;
+        text-align: center;
+
+        .imgdesc {
+          font-size: 12px;
+        }
+
+        .img {
+          height: 60px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          border-bottom: 1px solid #e9e9e9;
+
+          img {
+            width: 60px;
+            display: inline-block;
+          }
+
+          .flow {
+            width: 100px;
+          }
+
+          .vr {
+            width: 100px;
+          }
+
+          .ts {
+            width: 60px;
+          }
+
+          .otherFe {
+            width: 50px;
+          }
+
+          .other {
+            width: 160px;
+          }
+        }
+
+        .title {
+          font-weight: 600;
+          text-align: center;
+        }
+
+        .description {
+          padding: 0 10px;
+          font-size: 12px;
+        }
+      }
+    }
+  }
+
+  .talkBoss {
+    margin-top: 10px;
+    position: relative;
+    border: #cbcaca dashed 2px;
+    border-radius: 20px;
+    padding: 8px;
+
+    .talkBossLable {
+      border-bottom: 1px solid #cbcaca;
+      padding: 10px 0;
+      margin-bottom: 10px;
+      font-weight: 600;
+    }
+
+    img {
+      position: absolute;
+      bottom: 0;
+      right: 0;
+      width: 100px;
+      z-index: -1;
+      opacity: 0.5;
+    }
+  }
+}

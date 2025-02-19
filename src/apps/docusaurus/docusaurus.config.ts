@@ -18,6 +18,7 @@ const moduleConfigs = {
   network: "网络",
   node: "Node",
   linux: "Linux",
+  about: "关于我"
 
 
 };
@@ -59,7 +60,7 @@ const config: Config = {
           showReadingTime: true,
         },
         theme: {
-          customCss: "./src/css/custom.css",
+          customCss: "./src/css/custom.scss",
         },
       } satisfies Preset.Options,
     ],

@@ -28,3 +28,60 @@
   --ifm-color-primary-lightest: #4fddbf;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+
+.docs-doc-id-resume{
+  .theme-doc-markdown{
+    width: 960px;
+  }
+
+  .font12{
+    padding: 4px;
+    font-size: 12px;
+    background-color: rgba(0, 0, 0,0.05);
+    width: 70%;
+  }
+
+  p{
+    margin-bottom: 2px;
+  }
+
+  h2 {
+    margin-top: 20px!important;
+  }
+  ul{
+    margin-bottom: 6px;
+  }
+  li{
+    padding-bottom: 8px!important;
+  }
+  .ant-timeline-item{
+    li{
+      padding-bottom: 0px!important;
+    }
+  }
+
+  .my-timeline{
+    .ant-timeline-item{
+      padding-bottom: 30px!important;
+    }
+  }
+  .type-icon{
+    width: 30px;
+    position: relative;
+    top: 2px;
+    margin-right: 10px;
+  }
+}
+@media print {
+  .noprint, .theme-doc-breadcrumbs{
+   display: none;
+  }
+  .print-show{
+   display: block;
+  }
+  .print-show-inline{
+   display: inline-block!important;
+  }
+ }
+

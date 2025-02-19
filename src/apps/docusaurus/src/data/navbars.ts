@@ -1,6 +1,7 @@
 import holyTrinityImg from "../assets/img/docss/holy-trinity.webp"
 import feFwLibImg from "../assets/img/docss/fe-fw-lib.png"
 import feErgImg from "../assets/img/docss/fe-erg.png"
+import aboutImg from "../assets/img/docss/about.webp"
 
 const dynamicNavbarCfg = {
   holyTrinity: {
@@ -127,6 +128,21 @@ const dynamicNavbarCfg = {
         label: "Flutter",
         position: "left",
         docsPluginId: "flutter-module",
+      }
+      
+    ],
+  },
+  about: {
+    title: "关于我",
+    content: "强大如我，快来了解",
+    icon: aboutImg,
+    children: [
+      {
+        type: "docSidebar",
+        sidebarId: "tutorialSidebar",
+        label: "简历",
+        position: "left",
+        docsPluginId: "about-module",
       }
       
     ],
