@@ -133,10 +133,21 @@ datasource db {
 }
 ```
 
-### 检测数据库连通
+### 检测数据库连通和自动生成模型
+连接的过程中，prisma 会自动将 实体模型写入 Prisma Schema文件（prisma/schema.prisma）中
 
 ```shell
 npx prisma db pull
+```
+
+之后，你项目的 schema.prisma中 可能会多出模型定义代码
+```js
+...
+model user {
+  id    Int     @id @default(autoincrement())
+  name  String? @db.VarChar(255)
+}
+...
 ```
 
 ### 使用
@@ -154,6 +165,12 @@ router.get("/users", async (ctx) => {
 });
 ```
 
+
+
+
 :::tip 
-npx prisma generate, 这个命令会读取Prisma Schema文件（通常位于prisma/schema.prisma），并生成相应的客户端代码，这些代码会被放置在node_modules/.prisma/client目录下。当Prisma Schema发生变化 或者 数据库表结构有变化时，需要重新生成Prisma Client(既重新执行 npx prisma generate)以确保代码的更新。
+npx prisma generate, 这个命令会读取Prisma Schema文件（通常位于prisma/schema.prisma），并生成相应的客户端代码，这些代码会被放置在node_modules/.prisma/client目录下。当Prisma Schema发生变化时，需要重新生成Prisma Client(既重新执行 npx prisma generate)以确保代码的更新。
+
+简言之：npx prisma db pull 的时候生成实体模型，npx prisma generate 生成表操作代码
 :::
+
