@@ -75,7 +75,7 @@ router.post("/login", async (ctx, next) => {
 
 
 
-### 验证令牌
+### 解密令牌
 jwt.verify（来自 jsonwebtoken 库）和 koa-jwt 的 Token 验证本质上是相同的，但它们的应用场景和灵活性不同。
 
 koa-jwt 是一个 Koa 中间件，会自动检查请求头中的 Authorization，如果 Token 无效（签名错误、过期等），直接返回 401 Unauthorized，并终止请求。
@@ -90,6 +90,22 @@ try {
 } catch(err) {
   console.log('令牌无效，错误为', err)
 }
+```
+
+### 自定义401
+如果你不想给用户返回 401 错误，可以通过中间件的方式进行拦截处理
+```js
+// Custom 401 handling if you don't want to expose koa-jwt errors to users
+app.use(function(ctx, next){
+  return next().catch((err) => {
+    if (401 == err.status) {
+      ctx.status = 401;
+      ctx.body = 'Protected resource, use Authorization header to get access\n';
+    } else {
+      throw err;
+    }
+  });
+});
 ```
 
 
