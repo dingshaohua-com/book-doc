@@ -1,4 +1,5 @@
 import { useDispatch } from 'react-redux'
+import { setMsg } from '../store/action-creator'
 
 export default () => {
     const dispatch = useDispatch();

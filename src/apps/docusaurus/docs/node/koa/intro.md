@@ -26,3 +26,7 @@ app.listen(3001, () => {
   console.log('服务已经启动：http://localhost:3001');
 });
 ```
+
+官方目前没有一个快速搭建 koa 项目的方式，像 Vue-cli 一样。   
+可能是搭建一个 koa 项目成本也很低。   
+倒是一个工具 —— koa-generator，可是好几年没更新了，建议不要用！
