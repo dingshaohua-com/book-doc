@@ -108,6 +108,54 @@ app.use(function(ctx, next){
 });
 ```
 
+### 挂在全局
+在 Koa 应用中使用 `koa-jwt` 中间件时，默认情况下它会验证 JWT 的有效性，但不会自动将解析后的 **payload** 挂载到 `ctx` 上。如果你需要在后续中间件或路由中访问 JWT 的 payload（例如用户信息），可以通过自定义中间件来实现。在 `koa-jwt` 之后添加一个中间件，手动解析并挂载 payload 到 `ctx.state.user`（或其他自定义属性）：
+
+```javascript
+const Koa = require('koa');
+const Router = require('koa-router');
+const jwt = require('jsonwebtoken');
+const koaJwt = require('koa-jwt');
+
+const app = new Koa();
+const router = new Router();
+
+// 1. 使用 koa-jwt 中间件（验证 JWT）
+app.use(koaJwt({
+  secret: process.env.JWT_SECRET,
+}).unless({
+  path: [/^\/login/, /^\/register/]
+}));
+
+// 2. 自定义中间件：解析 token 并挂载 payload 到 ctx
+app.use(async (ctx, next) => {
+  if (ctx.header && ctx.header.authorization) {
+    const token = ctx.header.authorization.replace('Bearer ', '');
+    try {
+      const payload = jwt.verify(token, process.env.JWT_SECRET);
+      ctx.state.user = payload; // 挂载到 ctx.state.user
+      // 或者挂载到其他属性，如 ctx.user
+    } catch (err) {
+      // 如果 token 解析失败，可以忽略（因为 koa-jwt 已经验证过有效性）
+      console.error('Token 解析失败:', err);
+    }
+  }
+  await next();
+});
+
+// 3. 路由示例：访问挂载的 payload
+router.get('/protected', async (ctx) => {
+  // 从 ctx.state.user 获取 payload
+  ctx.body = {
+    message: '访问受保护的路由',
+    user: ctx.state.user // 这里可以拿到 JWT 的 payload
+  };
+});
+
+app.use(router.routes());
+app.listen(3000);
+```
+
 
 ## 其他
 ### 明文密码
