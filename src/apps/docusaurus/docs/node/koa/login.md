@@ -156,6 +156,23 @@ app.use(router.routes());
 app.listen(3000);
 ```
 
+#### --==封装==--
+你还可以将第二步封装为一个中间件
+```js
+const userMount = async (ctx, next) => {
+    if (ctx.header?.authorization) {
+        const token = ctx.header.authorization.replace('Bearer ', '');
+        try {
+            ctx.state.user = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (err) {
+            console.error('Token 解析失败:', err);
+        }
+    }
+    await next();
+}
+app.use(userMount);
+```
+
 
 ## 其他
 ### 明文密码
