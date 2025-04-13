@@ -159,6 +159,7 @@ app.listen(3000);
 #### --==封装==--
 你还可以将第二步封装为一个中间件
 ```js
+// middleware/user-mount.ts
 const userMount = async (ctx, next) => {
     if (ctx.header?.authorization) {
         const token = ctx.header.authorization.replace('Bearer ', '');
@@ -170,6 +171,8 @@ const userMount = async (ctx, next) => {
     }
     await next();
 }
+
+// app.ts
 app.use(userMount);
 ```
 
