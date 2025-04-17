@@ -152,3 +152,19 @@ http.post(baseURL + "/login", async ({ request }) => {
   }
 });
 ```
+
+## 集成到项目中
+注意先后顺序，需要在nsw 服务启动之后再初始化项目，防止请求接口在前，以 vue 为例
+```js
+// main.js
+import { createApp } from "vue";
+import App from "./App.vue";
+import { enableMocking } from "./mock";
+
+enableMocking().then(() => {
+  const app = createApp(App);
+  app.use(ArcoVue);
+  app.mount("#app");
+});
+
+```
