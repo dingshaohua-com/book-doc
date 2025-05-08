@@ -80,12 +80,12 @@ router.get("/user", (ctx) => {
 ### post
 
 @koa/router 针对 post 请求，参数并不好获取，  
-需要安装三方插件 `npm i @koa/bodyparser` (express 已经将其内置了，但是 koa 坚持精简)
+需要安装三方插件 `@koa/bodyparser` 或者 `koa-body`（推荐）(express 已经将其内置了，但是 koa 坚持精简)
 
 ```js
 import Koa from "koa";
 import Router from "@koa/router";
-import { bodyParser } from "@koa/bodyparser";
+import { bodyParser } from "koa-body";
 
 const app = new Koa();
 app.use(bodyParser());
